@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="windows-1251" standalone="yes"?>
+<root>
+	<Org ID="1" Name="Трипільська ТЕЦ">
+		<EnObj>
+			<IDEnObj>1</IDEnObj>
+			<Cipher>01</Cipher>
+			<EnObjName>Трипільська ТЕЦ</EnObjName>
+			<Coal Code="041">True</Coal>
+			<Masut Code="055">True</Masut>
+			<Gas Code="065">True</Gas>
+			<OtherOrg>False</OtherOrg>
+			<Filename>TPTC</Filename>
+		</EnObj>
+	</Org>
+	<Org ID="2" Name="Київенерго">
+		<EnObj>
+			<IDEnObj>2</IDEnObj>
+			<Cipher>12</Cipher>
+			<EnObjName>ТЕЦ-5</EnObjName>
+			<Coal Code="041">False</Coal>
+			<Masut Code="055">True</Masut>
+			<Gas Code="065">True</Gas>
+			<OtherOrg>True</OtherOrg>
+			<Filename>TEC5</Filename>
+		</EnObj>
+		<EnObj>
+			<IDEnObj>3</IDEnObj>
+			<Cipher>16</Cipher>
+			<EnObjName>ТЕЦ-6</EnObjName>
+			<Coal Code="041">False</Coal>
+			<Masut Code="055">True</Masut>
+			<Gas Code="065">True</Gas>
+			<OtherOrg>True</OtherOrg>
+			<Filename>TEC6</Filename>
+		</EnObj>
+		<EnObj>
+			<IDEnObj>4</IDEnObj>
+			<Cipher>79</Cipher>
+			<EnObjName>ПКТС</EnObjName>
+			<Coal Code="041">False</Coal>
+			<Masut Code="055">True</Masut>
+			<Gas Code="065">True</Gas>
+			<OtherOrg>True</OtherOrg>
+			<Filename>PKTS</Filename>
+		</EnObj>
+	</Org>
+	<Org ID="3" Name="ДТЕЦ">
+		<EnObj>
+			<IDEnObj>5</IDEnObj>
+			<Cipher>10</Cipher>
+			<EnObjName>ДТЕЦ</EnObjName>
+			<Coal Code="041">True</Coal>
+			<Masut Code="055">True</Masut>
+			<Gas Code="065">True</Gas>
+			<OtherOrg>False</OtherOrg>
+			<Filename>DTEC</Filename>
+		</EnObj>
+	</Org>
+	<Org ID="4" Name="Черкаська ТЕЦ">
+		<EnObj>
+			<IDEnObj>6</IDEnObj>
+			<Cipher>11</Cipher>
+			<EnObjName>Черкаська ТЕЦ</EnObjName>
+			<Coal Code="001">True</Coal>
+			<Masut Code="055">True</Masut>
+			<Gas Code="065">True</Gas>
+			<OtherOrg>False</OtherOrg>
+			<Filename>CKTC</Filename>
+		</EnObj>
+	</Org>
+	<Org ID="5" Name="Чернігівська ТЕЦ">
+		<EnObj>
+			<IDEnObj>7</IDEnObj>
+			<Cipher>13</Cipher>
+			<EnObjName>Чернігівська ТЕЦ</EnObjName>
+			<Coal Code="041">True</Coal>
+			<Masut Code="055">True</Masut>
+			<Gas Code="065">True</Gas>
+			<OtherOrg>False</OtherOrg>
+			<Filename>CNTC</Filename>
+		</EnObj>
+	</Org>
+	<Org ID="6" Name="Білоцерківська ТЕЦ">
+		<EnObj>
+			<IDEnObj>8</IDEnObj>
+			<Cipher>17</Cipher>
+			<EnObjName>Білоцерківська ТЕЦ</EnObjName>
+			<Coal Code="041">False</Coal>
+			<Masut Code="055">True</Masut>
+			<Gas Code="065">True</Gas>
+			<OtherOrg>False</OtherOrg>
+			<Filename>BCTC</Filename>
+		</EnObj>
+	</Org>
+</root>
