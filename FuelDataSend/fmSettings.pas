@@ -5,7 +5,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
   Data.DB, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
-  Vcl.DBCtrls, Vcl.Mask, Vcl.Samples.Spin, Vcl.ExtCtrls;
+  Vcl.DBCtrls, Vcl.Mask, Vcl.Samples.Spin, Vcl.ExtCtrls, System.Actions,
+  Vcl.ActnList;
 
 type
   TfrmSettings = class(TForm)
@@ -29,6 +30,9 @@ type
     edSubject: TDBEdit;
     btCancel: TButton;
     btOK: TButton;
+    ActionList: TActionList;
+    acToggleUseSecConnection: TAction;
+    procedure acToggleUseSecConnectionExecute(Sender: TObject);
   public
     class procedure Execute(AParamsDataSet: TDataSet);
   end;
@@ -41,6 +45,12 @@ implementation
 {$R *.dfm}
 
 { TfrmSettings }
+
+procedure TfrmSettings.acToggleUseSecConnectionExecute(Sender: TObject);
+begin
+  if dsParams.State in dsEditModes then
+    PostMessage(chbUseScureConnection.Handle, CM_EXIT, 0, 0);
+end;
 
 class procedure TfrmSettings.Execute(AParamsDataSet: TDataSet);
 var

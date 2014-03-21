@@ -68,7 +68,8 @@ var
 implementation
 
 uses
-  System.Variants, System.DateUtils, fmMain, fmBaseStationFrame, uPalyvoStations;
+  System.IOUtils, System.Variants, System.DateUtils, fmMain, fmBaseStationFrame,
+  uPalyvoStations;
 
 {$R *.dfm}
 
@@ -108,6 +109,8 @@ var
   XMLDoc: DOMDocument;
 begin
   XMLDoc := CoDOMDocument.Create;
+  if not TFile.Exists(SStationsFile) then
+    raise Exception.CreateFmt(SFileNotFound, [SStationsFile]);
   if not XMLDoc.load(SStationsFile) then
     raise Exception.Create(XMLDoc.parseError.reason);
   GetStationsList(XMLDoc);
@@ -127,9 +130,9 @@ var
   i: Integer;
   Node: IXMLDOMElement;
 begin
+  cdsFuelRef.Close;
+  cdsFuelRef.CreateDataSet;
   if Assigned(AXMLDoc) then begin
-    cdsFuelRef.Close;
-    cdsFuelRef.CreateDataSet;
     List := AXMLDoc.selectNodes(SFuelPath);
     for i := 0 to Pred(List.length) do begin
       Node := List.item[i] as IXMLDOMElement;

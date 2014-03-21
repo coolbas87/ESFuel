@@ -10,6 +10,7 @@ resourcestring
   SCloseApp = 'Закрити програму?';
   SCantCreateDirectory = 'Не вдалося створити папку ''%s''. Можливо недостатньо прав для запису в папку';
   SFileNotSended = 'Файл ''%s'' не відіслано';
+  SFileNotFound = 'Файл ''%s'' не знайдено';
 
 const
   SStationsFile = 'Stations.xml';

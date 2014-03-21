@@ -24,6 +24,7 @@ object frmFuelTypesRef: TfrmFuelTypesRef
     Height = 287
     Align = alClient
     DataSource = dsFuelRef
+    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleHotTrack]
     ReadOnly = True
     TabOrder = 0
     TitleFont.Charset = DEFAULT_CHARSET
@@ -50,8 +51,6 @@ object frmFuelTypesRef: TfrmFuelTypesRef
     Height = 37
     Align = alBottom
     TabOrder = 1
-    ExplicitTop = 277
-    ExplicitWidth = 284
     DesignSize = (
       294
       37)
@@ -65,7 +64,6 @@ object frmFuelTypesRef: TfrmFuelTypesRef
       Caption = 'Закрити'
       ModalResult = 8
       TabOrder = 0
-      ExplicitLeft = 203
     end
   end
   object dsFuelRef: TDataSource

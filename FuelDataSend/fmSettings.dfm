@@ -68,7 +68,7 @@ object frmSettings: TfrmSettings
       Top = 90
       Width = 149
       Height = 17
-      Caption = 'Захищене з’єднання (TLS)'
+      Action = acToggleUseSecConnection
       DataField = 'UseSecurityConn'
       DataSource = dsParams
       TabOrder = 2
@@ -98,6 +98,7 @@ object frmSettings: TfrmSettings
       Height = 21
       DataField = 'MailSrvPaswd'
       DataSource = dsParams
+      PasswordChar = '*'
       TabOrder = 4
     end
   end
@@ -183,5 +184,13 @@ object frmSettings: TfrmSettings
   object dsParams: TDataSource
     Left = 64
     Top = 64
+  end
+  object ActionList: TActionList
+    Left = 130
+    Top = 66
+    object acToggleUseSecConnection: TAction
+      Caption = 'Захищене з’єднання (TLS)'
+      OnExecute = acToggleUseSecConnectionExecute
+    end
   end
 end
