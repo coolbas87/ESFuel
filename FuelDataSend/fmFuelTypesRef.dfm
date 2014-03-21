@@ -1,9 +1,10 @@
 object frmFuelTypesRef: TfrmFuelTypesRef
   Left = 0
   Top = 0
+  BorderStyle = bsDialog
   Caption = 'Довідник видів палива'
-  ClientHeight = 314
-  ClientWidth = 284
+  ClientHeight = 324
+  ClientWidth = 294
   Color = clBtnFace
   Constraints.MinHeight = 352
   Constraints.MinWidth = 300
@@ -19,8 +20,8 @@ object frmFuelTypesRef: TfrmFuelTypesRef
   object DBGrid1: TDBGrid
     Left = 0
     Top = 0
-    Width = 284
-    Height = 277
+    Width = 294
+    Height = 287
     Align = alClient
     DataSource = dsFuelRef
     ReadOnly = True
@@ -44,17 +45,18 @@ object frmFuelTypesRef: TfrmFuelTypesRef
   end
   object Panel1: TPanel
     Left = 0
-    Top = 277
-    Width = 284
+    Top = 287
+    Width = 294
     Height = 37
     Align = alBottom
     TabOrder = 1
-    ExplicitWidth = 497
+    ExplicitTop = 277
+    ExplicitWidth = 284
     DesignSize = (
-      284
+      294
       37)
     object bClose: TButton
-      Left = 203
+      Left = 213
       Top = 6
       Width = 75
       Height = 25
@@ -63,7 +65,7 @@ object frmFuelTypesRef: TfrmFuelTypesRef
       Caption = 'Закрити'
       ModalResult = 8
       TabOrder = 0
-      ExplicitLeft = 416
+      ExplicitLeft = 203
     end
   end
   object dsFuelRef: TDataSource

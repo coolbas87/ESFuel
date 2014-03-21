@@ -5,7 +5,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls,
-  Vcl.ExtCtrls, Data.DB, Datasnap.DBClient;
+  Vcl.ExtCtrls, Data.DB, Datasnap.DBClient, System.Actions, Vcl.ActnList, fmCoal,
+  fmGas, fmMasut;
 
 type
   TfrmBaseStationFrame = class(TFrame)
@@ -32,16 +33,21 @@ type
     cdsStationDataGasCode: TIntegerField;
     cdsStationDataGasCosts: TIntegerField;
     cdsStationDataIsSendData: TBooleanField;
+    Actions: TActionList;
+    acToggleSendData: TAction;
+    procedure acToggleSendDataExecute(Sender: TObject);
+    procedure cdsStationDataIsSendDataChange(Sender: TField);
   private
-    FCoalFrame: TFrame;
-    FGasFrame: TFrame;
-    FMasutFrame: TFrame;
+    FCoalFrame: TfrmCoal;
+    FGasFrame: TfrmGas;
+    FMasutFrame: TfrmMasut;
     FHasCoal: Boolean;
     FHasGas: Boolean;
     FHasMasut: Boolean;
     FHasOtherOrgs: Boolean;
     function GetLowestBorder: Integer;
     function GetIsNeedSend: Boolean;
+    procedure SetReadOnly(AValue: Boolean);
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -52,11 +58,28 @@ type
 implementation
 
 uses
-  dMain, fmCoal, fmGas, fmMasut, uPalyvoStations;
+  dMain, uPalyvoStations;
 
 {$R *.dfm}
 
 { TfrmBaseStationFrame }
+
+procedure TfrmBaseStationFrame.acToggleSendDataExecute(Sender: TObject);
+begin
+  if cdsStationData.State in dsEditModes then
+    PostMessage(chbSendData.Handle, CM_EXIT, 0, 0);
+end;
+
+procedure TfrmBaseStationFrame.cdsStationDataIsSendDataChange(Sender: TField);
+begin
+  SetReadOnly(not Sender.AsBoolean);
+  if Assigned(FCoalFrame) then
+    FCoalFrame.IsReadOnly := Sender.AsBoolean;
+  if Assigned(FGasFrame) then
+    FGasFrame.IsReadOnly := Sender.AsBoolean;
+  if Assigned(FMasutFrame) then
+    FMasutFrame.IsReadOnly := Sender.AsBoolean;
+end;
 
 constructor TfrmBaseStationFrame.Create(AOwner: TComponent);
 begin
@@ -105,10 +128,7 @@ end;
 
 function TfrmBaseStationFrame.GetIsNeedSend: Boolean;
 begin
-  Result := chbSendData.Checked;
-// Правильней от поля результат брать, но апдейт поля происходит при смене фокуса,
-// потому до смены фокуса результат поля возвращается старый, до изменения
-//  Result := cdsStationDataIsSendData.AsBoolean;
+  Result := cdsStationDataIsSendData.AsBoolean;
 end;
 
 procedure TfrmBaseStationFrame.GetLayout(ALayout: TStringList);
@@ -150,6 +170,21 @@ begin
     if Result < CurentValue then
       Result := CurentValue;
   end;
+end;
+
+procedure TfrmBaseStationFrame.SetReadOnly(AValue: Boolean);
+begin
+  cdsStationDataCoalCode.ReadOnly := AValue;
+  cdsStationDataCoalIncome.ReadOnly := AValue;
+  cdsStationDataCoalCosts.ReadOnly := AValue;
+  cdsStationDataCoalRemains.ReadOnly := AValue;
+  cdsStationDataMasutCode.ReadOnly := AValue;
+  cdsStationDataMasutIncome.ReadOnly := AValue;
+  cdsStationDataMasutCosts.ReadOnly := AValue;
+  cdsStationDataMasutRemains.ReadOnly := AValue;
+  cdsStationDataMasutOtherOrgsRemains.ReadOnly := AValue;
+  cdsStationDataGasCode.ReadOnly := AValue;
+  cdsStationDataGasCosts.ReadOnly := AValue;
 end;
 
 end.

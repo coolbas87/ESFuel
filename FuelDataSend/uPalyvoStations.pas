@@ -3,7 +3,7 @@ unit uPalyvoStations;
 interface
 
 uses
-  Winapi.Windows, System.SysUtils, Vcl.Forms;
+  Winapi.Windows, System.SysUtils, Vcl.Forms, Vcl.Graphics;
 
 resourcestring
   SDateMoreThenToday = 'Дата не може бути більше ніж вчорашня';
@@ -57,6 +57,7 @@ const
   MonthLayout = 1;
   LayoutType: array[DailyLayout..MonthLayout] of String = ('001', '102');
   LayoutExt: array[DailyLayout..MonthLayout] of String = ('.txt', '.102');
+  CtrlColors: array[Boolean] of TColor = (clInfoBk, clWindow);
 
   SBaseFrameNameFmt = '%s%d';
 

@@ -137,8 +137,8 @@ object frmBaseStationFrame: TfrmBaseStationFrame
     Margins.Top = 2
     Margins.Right = 6
     Margins.Bottom = 0
+    Action = acToggleSendData
     Align = alTop
-    Caption = 'Відправляти дані по цій станції'
     DataField = 'IsSendData'
     DataSource = dsStationData
     TabOrder = 1
@@ -215,11 +215,20 @@ object frmBaseStationFrame: TfrmBaseStationFrame
     object cdsStationDataIsSendData: TBooleanField
       DefaultExpression = '''True'''
       FieldName = 'IsSendData'
+      OnChange = cdsStationDataIsSendDataChange
     end
   end
   object dsStationData: TDataSource
     DataSet = cdsStationData
     Left = 126
     Top = 42
+  end
+  object Actions: TActionList
+    Left = 208
+    Top = 42
+    object acToggleSendData: TAction
+      Caption = 'Відправляти дані по цій станції'
+      OnExecute = acToggleSendDataExecute
+    end
   end
 end
