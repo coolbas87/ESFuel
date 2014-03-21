@@ -79,7 +79,7 @@ end;
 procedure TfrmMain.acOpenSettingsExecute(Sender: TObject);
 begin
   if Assigned(dmMain) then begin
-    frmSettings.Execute(dmMain.cdsParams);
+    TfrmSettings.Execute(dmMain.cdsParams);
     dmMain.SaveSettings;
   end;
 end;

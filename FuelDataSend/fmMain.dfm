@@ -29,21 +29,26 @@ object frmMain: TfrmMain
     Height = 40
     Align = alTop
     TabOrder = 0
+    DesignSize = (
+      659
+      40)
     object bExit: TButton
-      Left = 568
+      Left = 578
       Top = 6
       Width = 75
       Height = 27
       Action = acClose
+      Anchors = [akTop, akRight]
       Cancel = True
       TabOrder = 1
     end
     object bSend: TButton
-      Left = 442
+      Left = 452
       Top = 6
       Width = 125
       Height = 27
       Action = acSendInfo
+      Anchors = [akTop, akRight]
       Default = True
       TabOrder = 0
     end
