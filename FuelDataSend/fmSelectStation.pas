@@ -20,8 +20,9 @@ type
     acOK: TAction;
     procedure acOKExecute(Sender: TObject);
     procedure acCloseExecute(Sender: TObject);
+    procedure ActionListUpdate(Action: TBasicAction; var Handled: Boolean);
   public
-    class procedure Execute(ADataSet: TDataSet);
+    class function Execute(ADataSet: TDataSet): Boolean;
   end;
 
 var
@@ -47,14 +48,20 @@ begin
   ModalResult := mrOk;
 end;
 
-class procedure TfrmSelectStation.Execute(ADataSet: TDataSet);
+procedure TfrmSelectStation.ActionListUpdate(Action: TBasicAction; var Handled: Boolean);
+begin
+  acOK.Enabled := (dsSource.State <> dsInactive) and not dsSource.DataSet.IsEmpty;
+end;
+
+class function TfrmSelectStation.Execute(ADataSet: TDataSet): Boolean;
 var
   Form: TfrmSelectStation;
 begin
   Form := TfrmSelectStation.Create(nil);
   try
     Form.dsSource.DataSet := ADataSet;
-    if Form.ShowModal <> mrOk then
+    Result := Form.ShowModal = mrOk;
+    if not Result then
       Form.acClose.Execute;
   finally
     FreeAndNil(Form);

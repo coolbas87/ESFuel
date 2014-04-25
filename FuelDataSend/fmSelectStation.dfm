@@ -93,6 +93,7 @@ object frmSelectStation: TfrmSelectStation
     Top = 28
   end
   object ActionList: TActionList
+    OnUpdate = ActionListUpdate
     Left = 78
     Top = 30
     object acClose: TAction

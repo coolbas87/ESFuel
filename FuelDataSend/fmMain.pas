@@ -165,33 +165,36 @@ procedure TfrmMain.FormCreate(Sender: TObject);
 var
   BaseFrame: TfrmBaseStationFrame;
   EnObjID: Integer;
+  UserCanceled: Boolean;
 begin
+  UserCanceled := False;
   if Assigned(dmMain) then begin
-    if (dmMain.cdsParamsstID.AsInteger <= 0) or not dmMain.cdsStationsRef.Locate(SFldstID, 
+    if (dmMain.cdsParamsstID.AsInteger <= 0) or not dmMain.cdsStationsRef.Locate(SFldstID,
       dmMain.cdsParamsstID.AsInteger, []) then begin
-      TfrmSelectStation.Execute(dmMain.cdsParams);
+      UserCanceled := not TfrmSelectStation.Execute(dmMain.cdsParams);
       dmMain.SaveSettings(True);
     end;
-    dmMain.SynchronizeDataDate;
-    FBaseFrames := TObjectDictionary<Integer, TfrmBaseStationFrame>.Create([doOwnsValues], 1);
-    dmMain.cdsEnObj.First;
-    while not dmMain.cdsEnObj.Eof do begin
-      EnObjID := dmMain.cdsEnObjIDEnObj.AsInteger;
-      BaseFrame := TfrmBaseStationFrame.Create(pnlBase);
-      BaseFrame.Name := Format(SBaseFrameNameFmt, [Name, EnObjID]);
-      BaseFrame.Parent := pnlBase;
-      BaseFrame.Align := alTop;
-      FBaseFrames.Add(EnObjID, BaseFrame);
-      dmMain.cdsEnObj.Next;
+    if not UserCanceled then begin
+      dmMain.SynchronizeDataDate;
+      FBaseFrames := TObjectDictionary<Integer, TfrmBaseStationFrame>.Create([doOwnsValues], 1);
+      dmMain.cdsEnObj.First;
+      while not dmMain.cdsEnObj.Eof do begin
+        EnObjID := dmMain.cdsEnObjIDEnObj.AsInteger;
+        BaseFrame := TfrmBaseStationFrame.Create(pnlBase);
+        BaseFrame.Name := Format(SBaseFrameNameFmt, [Name, EnObjID]);
+        BaseFrame.Parent := pnlBase;
+        BaseFrame.Align := alTop;
+        FBaseFrames.Add(EnObjID, BaseFrame);
+        dmMain.cdsEnObj.Next;
+      end;
+      pnlBase.AutoSize := True;
+      AutoSize := True;
     end;
-    pnlBase.AutoSize := True;
-    AutoSize := True;
   end;
 end;
 
 procedure TfrmMain.FormDestroy(Sender: TObject);
 begin
-  FBaseFrames.Clear;
   FreeAndNil(FBaseFrames);
 end;
 
