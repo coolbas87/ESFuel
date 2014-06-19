@@ -3,7 +3,7 @@ object frmMain: TfrmMain
   Top = 0
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
-  Caption = 'Передача даних палива у ЦЕС'
+  Caption = #1055#1077#1088#1077#1076#1072#1095#1072' '#1076#1072#1085#1080#1093' '#1087#1072#1083#1080#1074#1072' '#1091' '#1062#1045#1057
   ClientHeight = 180
   ClientWidth = 659
   Color = clBtnFace
@@ -82,7 +82,7 @@ object frmMain: TfrmMain
       Top = 4
       Width = 36
       Height = 13
-      Caption = 'Дані за'
+      Caption = #1044#1072#1085#1110' '#1079#1072
     end
     object dtpDate: TDateTimePicker
       Left = 45
@@ -115,13 +115,13 @@ object frmMain: TfrmMain
     Margins.Right = 6
     Margins.Bottom = 0
     Align = alTop
-    Caption = 'Тип макету'
+    Caption = #1058#1080#1087' '#1084#1072#1082#1077#1090#1091
     Columns = 2
     DataField = 'Layout'
     DataSource = dsParams
     Items.Strings = (
-      'Паливо за добу (макет 001)'
-      'Корекція наростаючих (макет 102)')
+      #1055#1072#1083#1080#1074#1086' '#1079#1072' '#1076#1086#1073#1091' ('#1084#1072#1082#1077#1090' 001)'
+      #1050#1086#1088#1077#1082#1094#1110#1103' '#1085#1072#1088#1086#1089#1090#1072#1102#1095#1080#1093' ('#1084#1072#1082#1077#1090' 102)')
     TabOrder = 1
     Values.Strings = (
       '0'
@@ -135,7 +135,7 @@ object frmMain: TfrmMain
       Action = acShowFuelRefBook
     end
     object N1: TMenuItem
-      Caption = 'Допомога'
+      Caption = #1044#1086#1087#1086#1084#1086#1075#1072
       Enabled = False
       ShortCut = 112
     end
@@ -157,18 +157,18 @@ object frmMain: TfrmMain
   object dsParams: TDataSource
     DataSet = dmMain.cdsParams
     Left = 108
-    Top = 84
+    Top = 87
   end
   object ActionList: TActionList
     OnUpdate = ActionListUpdate
     Left = 384
-    Top = 84
+    Top = 85
     object acClose: TAction
-      Caption = 'Вихід'
+      Caption = #1042#1080#1093#1110#1076
       OnExecute = acCloseExecute
     end
     object acSendInfo: TAction
-      Caption = 'Відіслати дані'
+      Caption = #1042#1110#1076#1110#1089#1083#1072#1090#1080' '#1076#1072#1085#1110
       OnExecute = acSendInfoExecute
     end
     object acOpenSettings: TAction
@@ -176,7 +176,7 @@ object frmMain: TfrmMain
       OnExecute = acOpenSettingsExecute
     end
     object acShowFuelRefBook: TAction
-      Caption = 'Довідник видів палива'
+      Caption = #1044#1086#1074#1110#1076#1085#1080#1082' '#1074#1080#1076#1110#1074' '#1087#1072#1083#1080#1074#1072
       OnExecute = acShowFuelRefBookExecute
     end
   end
