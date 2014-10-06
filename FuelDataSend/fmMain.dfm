@@ -1,11 +1,9 @@
 object frmMain: TfrmMain
   Left = 0
   Top = 0
-  BorderIcons = [biSystemMenu, biMinimize]
-  BorderStyle = bsSingle
-  Caption = #1055#1077#1088#1077#1076#1072#1095#1072' '#1076#1072#1085#1080#1093' '#1087#1072#1083#1080#1074#1072' '#1091' '#1062#1045#1057
-  ClientHeight = 180
-  ClientWidth = 659
+  Caption = 'Передача даних палива у ЦЕС'
+  ClientHeight = 308
+  ClientWidth = 741
   Color = clBtnFace
   Constraints.MinHeight = 228
   Constraints.MinWidth = 665
@@ -19,21 +17,31 @@ object frmMain: TfrmMain
   Position = poScreenCenter
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
-  OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
+  object Splitter1: TSplitter
+    Left = 185
+    Top = 71
+    Width = 6
+    Height = 197
+    Color = clBtnFace
+    ParentColor = False
+    ExplicitLeft = 182
+    ExplicitTop = 81
+    ExplicitHeight = 187
+  end
   object Panel1: TPanel
     Left = 0
-    Top = 140
-    Width = 659
+    Top = 268
+    Width = 741
     Height = 40
-    Align = alTop
+    Align = alBottom
     TabOrder = 0
     DesignSize = (
-      659
+      741
       40)
     object bExit: TButton
-      Left = 578
+      Left = 660
       Top = 6
       Width = 75
       Height = 27
@@ -43,7 +51,7 @@ object frmMain: TfrmMain
       TabOrder = 1
     end
     object bSend: TButton
-      Left = 452
+      Left = 534
       Top = 6
       Width = 125
       Height = 27
@@ -71,18 +79,18 @@ object frmMain: TfrmMain
     AlignWithMargins = True
     Left = 3
     Top = 3
-    Width = 653
+    Width = 735
     Height = 21
     Align = alTop
     AutoSize = True
     BevelOuter = bvNone
-    TabOrder = 3
+    TabOrder = 2
     object lblDaniCaption: TLabel
       Left = 6
       Top = 4
       Width = 36
       Height = 13
-      Caption = #1044#1072#1085#1110' '#1079#1072
+      Caption = 'Дані за'
     end
     object dtpDate: TDateTimePicker
       Left = 45
@@ -95,38 +103,92 @@ object frmMain: TfrmMain
       OnChange = dtpDateChange
     end
   end
-  object pnlBase: TPanel
-    Left = 0
-    Top = 71
-    Width = 659
-    Height = 69
-    Align = alTop
-    BevelOuter = bvNone
-    TabOrder = 2
-  end
   object rgLayoutType: TDBRadioGroup
     AlignWithMargins = True
     Left = 6
     Top = 29
-    Width = 647
+    Width = 729
     Height = 42
     Margins.Left = 6
     Margins.Top = 2
     Margins.Right = 6
     Margins.Bottom = 0
     Align = alTop
-    Caption = #1058#1080#1087' '#1084#1072#1082#1077#1090#1091
+    Caption = 'Тип макету'
     Columns = 2
     DataField = 'Layout'
     DataSource = dsParams
     Items.Strings = (
-      #1055#1072#1083#1080#1074#1086' '#1079#1072' '#1076#1086#1073#1091' ('#1084#1072#1082#1077#1090' 001)'
-      #1050#1086#1088#1077#1082#1094#1110#1103' '#1085#1072#1088#1086#1089#1090#1072#1102#1095#1080#1093' ('#1084#1072#1082#1077#1090' 102)')
+      'Паливо за добу (макет 001)'
+      'Корекція наростаючих (макет 102)')
     TabOrder = 1
     Values.Strings = (
       '0'
       '1')
     OnChange = rgLayoutTypeChange
+    ExplicitWidth = 459
+  end
+  object DBGrid1: TDBGrid
+    Left = 191
+    Top = 71
+    Width = 550
+    Height = 197
+    Align = alClient
+    DataSource = dsStationData
+    DrawingStyle = gdsGradient
+    TabOrder = 3
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'Tahoma'
+    TitleFont.Style = []
+    Columns = <
+      item
+        Expanded = False
+        FieldName = 'Code'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'CodeName'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'Income'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'Costs'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'Remains'
+        Visible = True
+      end>
+  end
+  object DBGrid2: TDBGrid
+    Left = 0
+    Top = 71
+    Width = 185
+    Height = 197
+    Align = alLeft
+    DataSource = dsEnObj
+    DrawingStyle = gdsGradient
+    TabOrder = 4
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'Tahoma'
+    TitleFont.Style = []
+    Columns = <
+      item
+        Expanded = False
+        FieldName = 'Name'
+        Visible = True
+      end>
   end
   object mmMain: TMainMenu
     Left = 160
@@ -135,7 +197,7 @@ object frmMain: TfrmMain
       Action = acShowFuelRefBook
     end
     object N1: TMenuItem
-      Caption = #1044#1086#1087#1086#1084#1086#1075#1072
+      Caption = 'Допомога'
       Enabled = False
       ShortCut = 112
     end
@@ -160,15 +222,14 @@ object frmMain: TfrmMain
     Top = 87
   end
   object ActionList: TActionList
-    OnUpdate = ActionListUpdate
     Left = 384
     Top = 85
     object acClose: TAction
-      Caption = #1042#1080#1093#1110#1076
+      Caption = 'Вихід'
       OnExecute = acCloseExecute
     end
     object acSendInfo: TAction
-      Caption = #1042#1110#1076#1110#1089#1083#1072#1090#1080' '#1076#1072#1085#1110
+      Caption = 'Відіслати дані'
       OnExecute = acSendInfoExecute
     end
     object acOpenSettings: TAction
@@ -176,7 +237,7 @@ object frmMain: TfrmMain
       OnExecute = acOpenSettingsExecute
     end
     object acShowFuelRefBook: TAction
-      Caption = #1044#1086#1074#1110#1076#1085#1080#1082' '#1074#1080#1076#1110#1074' '#1087#1072#1083#1080#1074#1072
+      Caption = 'Довідник видів палива'
       OnExecute = acShowFuelRefBookExecute
     end
   end
@@ -199,5 +260,15 @@ object frmMain: TfrmMain
     ConvertPreamble = True
     Left = 488
     Top = 87
+  end
+  object dsStationData: TDataSource
+    DataSet = dmMain.cdsStationData
+    Left = 48
+    Top = 87
+  end
+  object dsEnObj: TDataSource
+    DataSet = dmMain.cdsEnObj
+    Left = 48
+    Top = 136
   end
 end

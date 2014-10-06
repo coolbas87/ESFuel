@@ -8,9 +8,9 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, fmSelectStation, dMain, IdBaseComponent,
   IdComponent, IdIOHandler, IdIOHandlerSocket, IdIOHandlerStack, IdSSL,
   IdSSLOpenSSL, Vcl.Menus, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.ComCtrls,
-  Data.DB, Vcl.ActnList, Vcl.StdActns, System.Actions, fmBaseStationFrame,
-  IdTCPConnection, IdTCPClient, IdExplicitTLSClientServerBase, IdMessageClient,
-  IdSMTPBase, IdSMTP, IdAttachmentFile, IdMessage;
+  Data.DB, Vcl.ActnList, Vcl.StdActns, System.Actions, IdTCPConnection, IdTCPClient,
+  IdExplicitTLSClientServerBase, IdMessageClient,
+  IdSMTPBase, IdSMTP, IdAttachmentFile, IdMessage, Vcl.Grids, Vcl.DBGrids;
 
 type
   TDBRadioGroupCrack = class(TDBRadioGroup); // так делать нехорошо, но если очень надо...
@@ -28,7 +28,6 @@ type
     Panel2: TPanel;
     lblDaniCaption: TLabel;
     dtpDate: TDateTimePicker;
-    pnlBase: TPanel;
     dsParams: TDataSource;
     rgLayoutType: TDBRadioGroup;
     ActionList: TActionList;
@@ -38,18 +37,20 @@ type
     IdMessage: TIdMessage;
     acOpenSettings: TAction;
     acShowFuelRefBook: TAction;
+    DBGrid1: TDBGrid;
+    dsStationData: TDataSource;
+    dsEnObj: TDataSource;
+    DBGrid2: TDBGrid;
+    Splitter1: TSplitter;
     procedure FormCreate(Sender: TObject);
     procedure dtpDateChange(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure acCloseExecute(Sender: TObject);
     procedure rgLayoutTypeChange(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
-    procedure ActionListUpdate(Action: TBasicAction; var Handled: Boolean);
     procedure acSendInfoExecute(Sender: TObject);
     procedure acOpenSettingsExecute(Sender: TObject);
     procedure acShowFuelRefBookExecute(Sender: TObject);
   private
-    FBaseFrames: TObjectDictionary<Integer, TfrmBaseStationFrame>;
     function GetLayoutFile: String;
   end;
 
@@ -138,18 +139,6 @@ begin
     TfrmFuelTypesRef.Execute(dmMain.cdsFuelRef);
 end;
 
-procedure TfrmMain.ActionListUpdate(Action: TBasicAction; var Handled: Boolean);
-var
-  Pair: TPair<Integer, TfrmBaseStationFrame>;
-  CanSend: Boolean;
-begin
-  CanSend := False;
-  for Pair in FBaseFrames do
-    if not CanSend then
-      CanSend := Pair.Value.IsNeedSend;
-  acSendInfo.Enabled := CanSend;
-end;
-
 procedure TfrmMain.dtpDateChange(Sender: TObject);
 begin
   dmMain.SetDataDate(dtpDate.DateTime);
@@ -163,8 +152,6 @@ end;
 
 procedure TfrmMain.FormCreate(Sender: TObject);
 var
-  BaseFrame: TfrmBaseStationFrame;
-  EnObjID: Integer;
   UserCanceled: Boolean;
 begin
   UserCanceled := False;
@@ -175,37 +162,20 @@ begin
       dmMain.SaveSettings(True);
     end;
     if not UserCanceled then begin
+      dmMain.FillStationData;
       dmMain.SynchronizeDataDate;
-      FBaseFrames := TObjectDictionary<Integer, TfrmBaseStationFrame>.Create([doOwnsValues], 1);
-      dmMain.cdsEnObj.First;
-      while not dmMain.cdsEnObj.Eof do begin
-        EnObjID := dmMain.cdsEnObjIDEnObj.AsInteger;
-        BaseFrame := TfrmBaseStationFrame.Create(pnlBase);
-        BaseFrame.Name := Format(SBaseFrameNameFmt, [Name, EnObjID]);
-        BaseFrame.Parent := pnlBase;
-        BaseFrame.Align := alTop;
-        FBaseFrames.Add(EnObjID, BaseFrame);
-        dmMain.cdsEnObj.Next;
-      end;
-      pnlBase.AutoSize := True;
-      AutoSize := True;
     end;
   end;
-end;
-
-procedure TfrmMain.FormDestroy(Sender: TObject);
-begin
-  FreeAndNil(FBaseFrames);
 end;
 
 function TfrmMain.GetLayoutFile: String;
 var
   Layout: TStringList;
   Filename: String;
-  CurFrame: TfrmBaseStationFrame;
+//  CurFrame: TfrmBaseStationFrame;
 begin
   Filename := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0))) + SSendedFilesFolder;
-  CurFrame := FBaseFrames.Items[dmMain.cdsEnObjIDEnObj.AsInteger];
+//  CurFrame := FBaseFrames.Items[dmMain.cdsEnObjIDEnObj.AsInteger];
   if not DirectoryExists(Filename) then
     if not CreateDir(Filename) then
       raise Exception.CreateFmt(SCantCreateDirectory, [Filename]);
@@ -215,7 +185,7 @@ begin
   try
     Layout.Add(Format(SFmtLayoutHeader, [dmMain.GetLayoutType, dmMain.GetLayoutDate(SFmtLayoutDate),
       dmMain.cdsEnObjCipher.AsString]));
-    CurFrame.GetLayout(Layout);
+//    CurFrame.GetLayout(Layout);
     Layout.Add(SLayoutEnd);
     Filename := ChangeFileExt(Filename, dmMain.GetLayoutFileExt);
     Layout.SaveToFile(Filename);

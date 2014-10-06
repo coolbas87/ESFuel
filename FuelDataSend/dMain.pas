@@ -22,15 +22,8 @@ type
     cdsEnObjIDEnObj: TIntegerField;
     cdsEnObjCipher: TStringField;
     cdsEnObjName: TStringField;
-    cdsEnObjCoal: TBooleanField;
-    cdsEnObjMasut: TBooleanField;
-    cdsEnObjGas: TBooleanField;
-    cdsEnObjOtherOrg: TBooleanField;
     cdsEnObjFilename: TStringField;
     dsStationsRef: TDataSource;
-    cdsEnObjCoalCode: TIntegerField;
-    cdsEnObjMasutCode: TIntegerField;
-    cdsEnObjGasCode: TIntegerField;
     cdsParamsLayout: TIntegerField;
     cdsParamsDataDate: TDateTimeField;
     cdsParamsEmailFrom: TStringField;
@@ -41,22 +34,37 @@ type
     cdsParamsMailSrvPort: TIntegerField;
     cdsParamsMailSrvLogin: TStringField;
     cdsParamsMailSrvPaswd: TStringField;
+    cdsStationData: TClientDataSet;
+    cdsStationDataCode: TIntegerField;
+    cdsStationDataIncome: TIntegerField;
+    cdsStationDataCosts: TIntegerField;
+    cdsStationDataRemains: TIntegerField;
+    cdsStationDataCodeName: TStringField;
+    cdsFuelRefIsActive: TBooleanField;
+    cdsFuelRefClone: TClientDataSet;
+    cdsStationDataIDEnObj: TIntegerField;
+    cdsFuelTypes: TClientDataSet;
+    dsEnObj: TDataSource;
+    cdsFuelTypesCode: TIntegerField;
+    cdsFuelTypesIDEnObj: TIntegerField;
     procedure DataModuleCreate(Sender: TObject);
     procedure cdsParamsLayoutChange(Sender: TField);
     procedure cdsParamsDataDateValidate(Sender: TField);
     procedure cdsParamsDataDateChange(Sender: TField);
     procedure cdsParamsUseSecurityConnChange(Sender: TField);
+    procedure cdsStationDataNewRecord(DataSet: TDataSet);
+    procedure cdsFuelTypesNewRecord(DataSet: TDataSet);
   private
     FDateChanging: Boolean;
     procedure GetFuelList(AXMLDoc: DOMDocument);
     procedure GetStationsList(AXMLDoc: DOMDocument);
-    function GetSubNodeAttrib(ANode: IXMLDOMNode; const ANodeName, AAttrName: String): Variant;
-    function GetSubNodeValue(ANode: IXMLDOMNode; const ANodeName: String): Variant;
+    function GetSubNodeValue(ANode: IXMLDOMElement; const ANodeName: String): Variant;
     procedure LoadSettings;
   public
     function GetLayoutDate(const ADateFormat: String): String;
     function GetLayoutFileExt: String;
     function GetLayoutType: String;
+    procedure FillStationData;
     procedure SaveSettings(AOnlyStationID: Boolean = False);
     procedure SetDataDate(AValue: TDateTime);
     procedure SynchronizeDataDate;
@@ -68,10 +76,15 @@ var
 implementation
 
 uses
-  System.IOUtils, System.Variants, System.DateUtils, fmMain, fmBaseStationFrame,
+  System.IOUtils, System.Variants, System.DateUtils, fmMain,
   uPalyvoStations;
 
 {$R *.dfm}
+
+procedure TdmMain.cdsFuelTypesNewRecord(DataSet: TDataSet);
+begin
+  cdsFuelTypesIDEnObj.AsInteger := cdsEnObjIDEnObj.AsInteger;
+end;
 
 procedure TdmMain.cdsParamsDataDateChange(Sender: TField);
 begin
@@ -104,6 +117,11 @@ begin
     cdsParamsMailSrvPort.AsInteger := SMTPStandPort;
 end;
 
+procedure TdmMain.cdsStationDataNewRecord(DataSet: TDataSet);
+begin
+  cdsStationDataIDEnObj.AsInteger := cdsEnObjIDEnObj.AsInteger;
+end;
+
 procedure TdmMain.DataModuleCreate(Sender: TObject);
 var
   XMLDoc: DOMDocument;
@@ -124,6 +142,32 @@ begin
   cdsParams.CheckBrowseMode;
 end;
 
+procedure TdmMain.FillStationData;
+begin
+  cdsStationData.Close;
+  cdsStationData.CreateDataSet;
+  cdsStationData.DisableControls;
+  try
+    cdsEnObj.First;
+    while not cdsEnObj.Eof do begin
+      cdsFuelTypes.First;
+      while not cdsFuelTypes.Eof do begin
+        cdsStationData.Insert;
+        cdsStationDataCode.AsInteger := cdsFuelTypesCode.AsInteger;
+        cdsStationData.CheckBrowseMode;
+        cdsFuelTypes.Next;
+      end;
+      cdsEnObj.Next;
+    end;
+  finally
+    cdsStationData.EnableControls;
+  end;
+  cdsStationData.MasterSource := dsEnObj;
+  cdsStationData.MasterFields := SFldIDEnObj;
+  cdsEnObj.First;
+  cdsStationData.First;
+end;
+
 procedure TdmMain.GetFuelList(AXMLDoc: DOMDocument);
 var
   List: IXMLDOMNodeList;
@@ -139,9 +183,13 @@ begin
       cdsFuelRef.Insert;
       cdsFuelRefCode.AsVariant := Node.getAttribute(SCode);
       cdsFuelRefName.AsVariant := Node.getAttribute(SName);
+      cdsFuelRefIsActive.AsVariant := Node.getAttribute(SFldIsActive);
       cdsFuelRef.Post;
     end;
     cdsFuelRef.First;
+    cdsFuelRefClone.CloneCursor(cdsFuelRef, True, False);
+    cdsFuelRefClone.Filter := SFldIsActive;
+    cdsFuelRefClone.Filtered := True;
   end;
 end;
 
@@ -162,11 +210,9 @@ end;
 
 procedure TdmMain.GetStationsList(AXMLDoc: DOMDocument);
 var
-  StationList, EnObjList: IXMLDOMNodeList;
-  i, StationID: Integer;
-  Elem: IXMLDOMElement;
-  Node: IXMLDOMNode;
-  j: Integer;
+  StationList, EnObjList, FuelList: IXMLDOMNodeList;
+  I, J, K, StationID: Integer;
+  Elem, Node, FuelNode: IXMLDOMElement;
 begin
   if Assigned(AXMLDoc) then begin
     cdsStationsRef.Close;
@@ -175,51 +221,42 @@ begin
     cdsEnObj.CreateDataSet;
     cdsEnObj.MasterSource := dsStationsRef;
     cdsEnObj.MasterFields := SFldstID;
+    cdsFuelTypes.Close;
+    cdsFuelTypes.CreateDataSet;
     StationList := AXMLDoc.selectNodes(SPidprPath);
     if Assigned(StationList) and (StationList.length > 0) then
-      for i := 0 to Pred(StationList.length) do begin
-        Elem := StationList.item[i] as IXMLDOMElement;
+      for I := 0 to Pred(StationList.length) do begin
+        Elem := StationList.item[I] as IXMLDOMElement;
         StationID := Elem.getAttribute(SFldID);
         cdsStationsRef.Insert;
         cdsStationsRefstID.AsVariant := StationID;
         cdsStationsRefName.AsVariant := Elem.getAttribute(SName);
         cdsStationsRef.Post;
         EnObjList := Elem.getElementsByTagName(SEnObj);
-        if Assigned(EnObjList) and (EnObjList.length > 0)then
-          for j := 0 to Pred(EnObjList.length) do begin
-            Node := EnObjList.item[j] as IXMLDOMElement;
-            cdsEnObj.Insert;
+        if Assigned(EnObjList) and (EnObjList.length > 0) then
+          for J := 0 to Pred(EnObjList.length) do begin
+            Node := EnObjList.item[J] as IXMLDOMElement;
+            cdsEnObj.Append;
             cdsEnObjID.AsInteger := StationID;
             cdsEnObjIDEnObj.AsVariant := GetSubNodeValue(Node, SFldIDEnObj);
             cdsEnObjCipher.AsVariant := GetSubNodeValue(Node, SFldCipher);
             cdsEnObjName.AsVariant := GetSubNodeValue(Node, SFldEnObjName);
-            cdsEnObjCoal.AsVariant := GetSubNodeValue(Node, SFldCoal);
-            cdsEnObjCoalCode.AsVariant := GetSubNodeAttrib(Node, SFldCoal, SCode);
-            cdsEnObjMasut.AsVariant := GetSubNodeValue(Node, SFldMasut);
-            cdsEnObjMasutCode.AsVariant := GetSubNodeAttrib(Node, SFldMasut, SCode);
-            cdsEnObjGas.AsVariant := GetSubNodeValue(Node, SFldGas);
-            cdsEnObjGasCode.AsVariant := GetSubNodeAttrib(Node, SFldGas, SCode);
-            cdsEnObjOtherOrg.AsVariant := GetSubNodeValue(Node, SFldOtherOrg);
             cdsEnObjFilename.AsVariant := GetSubNodeValue(Node, SFldFilename);
-            cdsEnObj.Post;
+            FuelList := Node.getElementsByTagName(SFuel);
+            if Assigned(FuelList) and (FuelList.length > 0) then
+              for K := 0 to Pred(FuelList.length) do begin
+                FuelNode := FuelList.item[K] as IXMLDOMElement;
+                cdsFuelTypes.Append;
+                cdsFuelTypesCode.AsVariant := FuelNode.getAttribute(SCode);
+                cdsFuelTypes.CheckBrowseMode;
+              end;
+            cdsEnObj.CheckBrowseMode;
           end;
       end;
   end;
 end;
 
-function TdmMain.GetSubNodeAttrib(ANode: IXMLDOMNode; const ANodeName, AAttrName: String): Variant;
-var
-  Node: IXMLDOMNode;
-begin
-  Result := Null;
-  if Assigned(ANode) then begin
-    Node := ANode.selectSingleNode(ANodeName);
-    if Assigned(Node) then
-      Result := (Node as IXMLDOMElement).getAttribute(AAttrName)
-  end;
-end;
-
-function TdmMain.GetSubNodeValue(ANode: IXMLDOMNode; const ANodeName: String): Variant;
+function TdmMain.GetSubNodeValue(ANode: IXMLDOMElement; const ANodeName: String): Variant;
 var
   Node: IXMLDOMNode;
 begin

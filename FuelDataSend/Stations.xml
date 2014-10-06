@@ -5,9 +5,10 @@
 			<IDEnObj>1</IDEnObj>
 			<Cipher>01</Cipher>
 			<EnObjName>Трипільська ТЕЦ</EnObjName>
-			<Coal Code="041">True</Coal>
-			<Masut Code="055">True</Masut>
-			<Gas Code="065">True</Gas>
+			<Fuel Code = "041"/>
+			<Fuel Code = "001"/>
+			<Fuel Code = "055"/>
+			<Fuel Code = "065"/>
 			<OtherOrg>False</OtherOrg>
 			<Filename>TPTC</Filename>
 		</EnObj>
@@ -17,9 +18,9 @@
 			<IDEnObj>2</IDEnObj>
 			<Cipher>12</Cipher>
 			<EnObjName>ТЕЦ-5</EnObjName>
-			<Coal Code="041">False</Coal>
-			<Masut Code="055">True</Masut>
-			<Gas Code="065">True</Gas>
+			<Fuel Code = "055"/>
+			<Fuel Code = "855"/>
+			<Fuel Code = "065"/>
 			<OtherOrg>True</OtherOrg>
 			<Filename>TEC5</Filename>
 		</EnObj>
@@ -27,9 +28,9 @@
 			<IDEnObj>3</IDEnObj>
 			<Cipher>16</Cipher>
 			<EnObjName>ТЕЦ-6</EnObjName>
-			<Coal Code="041">False</Coal>
-			<Masut Code="055">True</Masut>
-			<Gas Code="065">True</Gas>
+			<Fuel Code = "055"/>
+			<Fuel Code = "855"/>
+			<Fuel Code = "065"/>
 			<OtherOrg>True</OtherOrg>
 			<Filename>TEC6</Filename>
 		</EnObj>
@@ -37,9 +38,9 @@
 			<IDEnObj>4</IDEnObj>
 			<Cipher>79</Cipher>
 			<EnObjName>ПКТС</EnObjName>
-			<Coal Code="041">False</Coal>
-			<Masut Code="055">True</Masut>
-			<Gas Code="065">True</Gas>
+			<Fuel Code = "055"/>
+			<Fuel Code = "855"/>
+			<Fuel Code = "065"/>
 			<OtherOrg>True</OtherOrg>
 			<Filename>PKTS</Filename>
 		</EnObj>
@@ -49,9 +50,9 @@
 			<IDEnObj>5</IDEnObj>
 			<Cipher>10</Cipher>
 			<EnObjName>ДТЕЦ</EnObjName>
-			<Coal Code="041">True</Coal>
-			<Masut Code="055">True</Masut>
-			<Gas Code="065">True</Gas>
+			<Fuel Code = "041"/>
+			<Fuel Code = "055"/>
+			<Fuel Code = "065"/>
 			<OtherOrg>False</OtherOrg>
 			<Filename>DTEC</Filename>
 		</EnObj>
@@ -61,9 +62,9 @@
 			<IDEnObj>6</IDEnObj>
 			<Cipher>11</Cipher>
 			<EnObjName>Черкаська ТЕЦ</EnObjName>
-			<Coal Code="001">True</Coal>
-			<Masut Code="055">True</Masut>
-			<Gas Code="065">True</Gas>
+			<Fuel Code = "001"/>
+			<Fuel Code = "055"/>
+			<Fuel Code = "065"/>
 			<OtherOrg>False</OtherOrg>
 			<Filename>CKTC</Filename>
 		</EnObj>
@@ -73,9 +74,9 @@
 			<IDEnObj>7</IDEnObj>
 			<Cipher>13</Cipher>
 			<EnObjName>Чернігівська ТЕЦ</EnObjName>
-			<Coal Code="041">True</Coal>
-			<Masut Code="055">True</Masut>
-			<Gas Code="065">True</Gas>
+			<Fuel Code = "041"/>
+			<Fuel Code = "055"/>
+			<Fuel Code = "065"/>
 			<OtherOrg>False</OtherOrg>
 			<Filename>CNTC</Filename>
 		</EnObj>
@@ -85,9 +86,8 @@
 			<IDEnObj>8</IDEnObj>
 			<Cipher>17</Cipher>
 			<EnObjName>Білоцерківська ТЕЦ</EnObjName>
-			<Coal Code="041">False</Coal>
-			<Masut Code="055">True</Masut>
-			<Gas Code="065">True</Gas>
+			<Fuel Code = "055"/>
+			<Fuel Code = "065"/>
 			<OtherOrg>False</OtherOrg>
 			<Filename>BCTC</Filename>
 		</EnObj>

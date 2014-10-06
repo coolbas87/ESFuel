@@ -2,7 +2,7 @@
 <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
   <assemblyIdentity
     name="Central Region Station Fuel Data Send" 
-    version="2.0.2.2"/>
+    version="3.0.0.1"/>
   <description>
     Central Region Station Fuel Data Send
   </description>

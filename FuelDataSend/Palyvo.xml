@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="windows-1251" standalone="yes"?>
 <root>
-	<Fuel Name="Вугілля всього" Code="33"/>
-	<Fuel Name="Донецьке вугілля" Code="1"/>
-	<Fuel Name="Кузнецьке вугілля" Code="4"/>
-	<Fuel Name="Львівсько-волинське вугілля" Code="14"/>
-	<Fuel Name="Українське буре вугілля" Code="25"/>
-	<Fuel Name="Донецький АШ" Code="41"/>
-	<Fuel Name="Донецький Т" Code="42"/>
-	<Fuel Name="Донецький промпродукт" Code="43"/>
-	<Fuel Name="Донецький шлам" Code="38"/>
-	<Fuel Name="Львівсько-Волинський шлам" Code="39"/>
-	<Fuel Name="Мазут" Code="55"/>
-	<Fuel Name="Газотурбінне паливо" Code="56"/>
-	<Fuel Name="Дизельне паливо" Code="57"/>
-	<Fuel Name="Нафта" Code="59"/>
-	<Fuel Name="Газ природний" Code="65"/>
-	<Fuel Name="Газ попутний" Code="66"/>
-	<Fuel Name="Нафтогаз" Code="67"/>
-	<Fuel Name="Газ від промпідприємств" Code="68"/>
-	<Fuel Name="Торф" Code="75"/>
-	<Fuel Name="Сланці" Code="80"/>
-	<Fuel Name="Деревні відходи" Code="85"/>
+	<Fuel Name="Вугілля всього" Code="33" IsActive="0"/>
+	<Fuel Name="Донецьке вугілля" Code="1" IsActive="1"/>
+	<Fuel Name="Кузнецьке вугілля" Code="4" IsActive="0"/>
+	<Fuel Name="Львівсько-волинське вугілля" Code="14" IsActive="0"/>
+	<Fuel Name="Українське буре вугілля" Code="25" IsActive="0"/>
+	<Fuel Name="Донецький АШ" Code="41" IsActive="1"/>
+	<Fuel Name="Донецький Т" Code="42" IsActive="0"/>
+	<Fuel Name="Донецький промпродукт" Code="43" IsActive="0"/>
+	<Fuel Name="Донецький шлам" Code="38" IsActive="0"/>
+	<Fuel Name="Львівсько-Волинський шлам" Code="39" IsActive="0"/>
+	<Fuel Name="Мазут" Code="55" IsActive="1"/>
+	<Fuel Name="Газотурбінне паливо" Code="56" IsActive="0"/>
+	<Fuel Name="Дизельне паливо" Code="57" IsActive="0"/>
+	<Fuel Name="Нафта" Code="59" IsActive="0"/>
+	<Fuel Name="Газ природний" Code="65" IsActive="1"/>
+	<Fuel Name="Газ попутний" Code="66" IsActive="0"/>
+	<Fuel Name="Нафтогаз" Code="67" IsActive="0"/>
+	<Fuel Name="Газ від промпідприємств" Code="68" IsActive="0"/>
+	<Fuel Name="Торф" Code="75" IsActive="0"/>
+	<Fuel Name="Сланці" Code="80" IsActive="0"/>
+	<Fuel Name="Деревні відходи" Code="85" IsActive="0"/>
+	<Fuel Name="Мазут(Сторонні організації)" Code="855" IsActive="1"/>
 </root>

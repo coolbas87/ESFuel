@@ -21,12 +21,9 @@ const
   SFldIDEnObj = 'IDEnObj';
   SFldCipher = 'Cipher';
   SFldEnObjName = 'EnObjName';
-  SFldCoal = 'Coal';
-  SFldMasut = 'Masut';
-  SFldGas = 'Gas';
-  SFldOtherOrg = 'OtherOrg';
   SFldFilename = 'Filename';
   SFldstID = 'stID';
+  SFldIsActive = 'IsActive';
   SName = 'Name';
   SFldID = 'ID';
   SCode = 'Code';
@@ -53,19 +50,16 @@ const
   SProgramSngsSection = 'ProgramSettings';
   SEmailSngsSection = 'EmailSettings';
   SMailSrvSection = 'MailServerSettings';
+  SFuel = 'Fuel';
 
   DailyLayout = 0;
   MonthLayout = 1;
   LayoutType: array[DailyLayout..MonthLayout] of String = ('001', '102');
   LayoutExt: array[DailyLayout..MonthLayout] of String = ('.txt', '.102');
-  CtrlColors: array[Boolean] of TColor = (clInfoBk, clWindow);
-
-  SBaseFrameNameFmt = '%s%d';
 
   IncomeValueIndex = 1;
   CostsValueIndex = 2;
   RemainsValueIndex = 3;
-  OtherOrgsValueIndex = 4;
 
   SMTPStandPort = 25;
   SMTPTLSPort = 465;

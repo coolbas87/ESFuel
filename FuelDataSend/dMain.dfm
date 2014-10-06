@@ -1,8 +1,8 @@
 object dmMain: TdmMain
   OldCreateOrder = False
   OnCreate = DataModuleCreate
-  Height = 223
-  Width = 284
+  Height = 258
+  Width = 438
   object cdsStationsRef: TClientDataSet
     Aggregates = <>
     FieldDefs = <>
@@ -31,6 +31,10 @@ object dmMain: TdmMain
         Name = 'Name'
         DataType = ftString
         Size = 100
+      end
+      item
+        Name = 'IsActive'
+        DataType = ftBoolean
       end>
     IndexDefs = <>
     IndexFieldNames = 'Code'
@@ -49,6 +53,10 @@ object dmMain: TdmMain
       DisplayWidth = 30
       FieldName = 'Name'
       Size = 100
+    end
+    object cdsFuelRefIsActive: TBooleanField
+      DefaultExpression = '''False'''
+      FieldName = 'IsActive'
     end
   end
   object cdsParams: TClientDataSet
@@ -141,44 +149,106 @@ object dmMain: TdmMain
       Size = 5
     end
     object cdsEnObjName: TStringField
+      DisplayWidth = 25
       FieldName = 'Name'
       Size = 100
-    end
-    object cdsEnObjCoal: TBooleanField
-      FieldName = 'Coal'
-    end
-    object cdsEnObjMasut: TBooleanField
-      FieldName = 'Masut'
-    end
-    object cdsEnObjGas: TBooleanField
-      FieldName = 'Gas'
-    end
-    object cdsEnObjOtherOrg: TBooleanField
-      FieldName = 'OtherOrg'
     end
     object cdsEnObjFilename: TStringField
       FieldName = 'Filename'
       Size = 10
-    end
-    object cdsEnObjCoalCode: TIntegerField
-      FieldName = 'CoalCode'
-      DisplayFormat = '000'
-      EditFormat = '000'
-    end
-    object cdsEnObjMasutCode: TIntegerField
-      FieldName = 'MasutCode'
-      DisplayFormat = '000'
-      EditFormat = '000'
-    end
-    object cdsEnObjGasCode: TIntegerField
-      FieldName = 'GasCode'
-      DisplayFormat = '000'
-      EditFormat = '000'
     end
   end
   object dsStationsRef: TDataSource
     DataSet = cdsStationsRef
     Left = 48
     Top = 64
+  end
+  object cdsStationData: TClientDataSet
+    Aggregates = <>
+    FieldDefs = <>
+    IndexDefs = <>
+    IndexFieldNames = 'IDEnObj'
+    Params = <>
+    StoreDefs = True
+    OnNewRecord = cdsStationDataNewRecord
+    Left = 344
+    Top = 18
+    object cdsStationDataIDEnObj: TIntegerField
+      DefaultExpression = '0'
+      DisplayLabel = 'Станція'
+      FieldName = 'IDEnObj'
+      Required = True
+    end
+    object cdsStationDataCode: TIntegerField
+      DisplayLabel = 'Код палива'
+      FieldName = 'Code'
+      Required = True
+      DisplayFormat = '000'
+      EditFormat = '000'
+    end
+    object cdsStationDataCodeName: TStringField
+      DisplayLabel = 'Паливо'
+      DisplayWidth = 25
+      FieldKind = fkLookup
+      FieldName = 'CodeName'
+      LookupDataSet = cdsFuelRefClone
+      LookupKeyFields = 'Code'
+      LookupResultField = 'Name'
+      KeyFields = 'Code'
+      Required = True
+      Size = 1024
+      Lookup = True
+    end
+    object cdsStationDataIncome: TIntegerField
+      DefaultExpression = '0'
+      DisplayLabel = 'Прихід'
+      FieldName = 'Income'
+      Required = True
+    end
+    object cdsStationDataCosts: TIntegerField
+      DefaultExpression = '0'
+      DisplayLabel = 'Витрати'
+      FieldName = 'Costs'
+      Required = True
+    end
+    object cdsStationDataRemains: TIntegerField
+      DefaultExpression = '0'
+      DisplayLabel = 'Залишки'
+      FieldName = 'Remains'
+      Required = True
+    end
+  end
+  object cdsFuelRefClone: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 208
+    Top = 16
+  end
+  object cdsFuelTypes: TClientDataSet
+    Aggregates = <>
+    FieldDefs = <>
+    IndexDefs = <>
+    IndexFieldNames = 'IDEnObj'
+    MasterFields = 'IDEnObj'
+    MasterSource = dsEnObj
+    PacketRecords = 0
+    Params = <>
+    StoreDefs = True
+    OnNewRecord = cdsFuelTypesNewRecord
+    Left = 126
+    Top = 176
+    object cdsFuelTypesIDEnObj: TIntegerField
+      FieldName = 'IDEnObj'
+    end
+    object cdsFuelTypesCode: TIntegerField
+      FieldName = 'Code'
+      DisplayFormat = '000'
+      EditFormat = '000'
+    end
+  end
+  object dsEnObj: TDataSource
+    DataSet = cdsEnObj
+    Left = 128
+    Top = 128
   end
 end

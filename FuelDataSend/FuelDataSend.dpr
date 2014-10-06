@@ -11,10 +11,6 @@ uses
   dMain in 'dMain.pas' {dmMain: TDataModule},
   uPalyvoStations in 'uPalyvoStations.pas',
   fmSelectStation in 'fmSelectStation.pas' {frmSelectStation},
-  fmBaseStationFrame in 'fmBaseStationFrame.pas' {frmBaseStationFrame: TFrame},
-  fmCoal in 'fmCoal.pas' {frmCoal: TFrame},
-  fmMasut in 'fmMasut.pas' {frmMasut: TFrame},
-  fmGas in 'fmGas.pas' {frmGas: TFrame},
   fmSettings in 'fmSettings.pas' {frmSettings},
   fmFuelTypesRef in 'fmFuelTypesRef.pas' {frmFuelTypesRef};
 
