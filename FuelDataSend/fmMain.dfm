@@ -2,11 +2,11 @@ object frmMain: TfrmMain
   Left = 0
   Top = 0
   Caption = 'Передача даних палива у ЦЕС'
-  ClientHeight = 308
-  ClientWidth = 741
+  ClientHeight = 322
+  ClientWidth = 734
   Color = clBtnFace
-  Constraints.MinHeight = 228
-  Constraints.MinWidth = 665
+  Constraints.MinHeight = 380
+  Constraints.MinWidth = 750
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
@@ -19,29 +19,20 @@ object frmMain: TfrmMain
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
-  object Splitter1: TSplitter
-    Left = 185
-    Top = 71
-    Width = 6
-    Height = 197
-    Color = clBtnFace
-    ParentColor = False
-    ExplicitLeft = 182
-    ExplicitTop = 81
-    ExplicitHeight = 187
-  end
   object Panel1: TPanel
     Left = 0
-    Top = 268
-    Width = 741
+    Top = 282
+    Width = 734
     Height = 40
     Align = alBottom
     TabOrder = 0
+    ExplicitTop = 312
+    ExplicitWidth = 741
     DesignSize = (
-      741
+      734
       40)
     object bExit: TButton
-      Left = 660
+      Left = 653
       Top = 6
       Width = 75
       Height = 27
@@ -49,9 +40,10 @@ object frmMain: TfrmMain
       Anchors = [akTop, akRight]
       Cancel = True
       TabOrder = 1
+      ExplicitLeft = 660
     end
     object bSend: TButton
-      Left = 534
+      Left = 527
       Top = 6
       Width = 125
       Height = 27
@@ -59,35 +51,23 @@ object frmMain: TfrmMain
       Anchors = [akTop, akRight]
       Default = True
       TabOrder = 0
-    end
-    object bSetings: TButton
-      Left = 6
-      Top = 6
-      Width = 30
-      Height = 27
-      Action = acOpenSettings
-      Font.Charset = SYMBOL_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -21
-      Font.Name = 'Webdings'
-      Font.Style = []
-      ParentFont = False
-      TabOrder = 2
+      ExplicitLeft = 534
     end
   end
   object Panel2: TPanel
     AlignWithMargins = True
     Left = 3
     Top = 3
-    Width = 735
+    Width = 728
     Height = 21
     Align = alTop
     AutoSize = True
     BevelOuter = bvNone
     TabOrder = 2
+    ExplicitWidth = 735
     object lblDaniCaption: TLabel
-      Left = 6
-      Top = 4
+      Left = 7
+      Top = 3
       Width = 36
       Height = 13
       Caption = 'Дані за'
@@ -107,7 +87,7 @@ object frmMain: TfrmMain
     AlignWithMargins = True
     Left = 6
     Top = 29
-    Width = 729
+    Width = 722
     Height = 42
     Margins.Left = 6
     Margins.Top = 2
@@ -126,75 +106,155 @@ object frmMain: TfrmMain
       '0'
       '1')
     OnChange = rgLayoutTypeChange
-    ExplicitWidth = 459
+    ExplicitWidth = 729
   end
-  object DBGrid1: TDBGrid
-    Left = 191
-    Top = 71
-    Width = 550
-    Height = 197
-    Align = alClient
-    DataSource = dsStationData
-    DrawingStyle = gdsGradient
-    TabOrder = 3
-    TitleFont.Charset = DEFAULT_CHARSET
-    TitleFont.Color = clWindowText
-    TitleFont.Height = -11
-    TitleFont.Name = 'Tahoma'
-    TitleFont.Style = []
-    Columns = <
-      item
-        Expanded = False
-        FieldName = 'Code'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'CodeName'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'Income'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'Costs'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'Remains'
-        Visible = True
-      end>
-  end
-  object DBGrid2: TDBGrid
+  object PageControl1: TPageControl
     Left = 0
     Top = 71
-    Width = 185
-    Height = 197
-    Align = alLeft
-    DataSource = dsEnObj
-    DrawingStyle = gdsGradient
-    TabOrder = 4
-    TitleFont.Charset = DEFAULT_CHARSET
-    TitleFont.Color = clWindowText
-    TitleFont.Height = -11
-    TitleFont.Name = 'Tahoma'
-    TitleFont.Style = []
-    Columns = <
-      item
-        Expanded = False
-        FieldName = 'Name'
-        Visible = True
-      end>
+    Width = 734
+    Height = 211
+    ActivePage = tsStandartView
+    Align = alClient
+    MultiLine = True
+    TabOrder = 3
+    TabPosition = tpRight
+    ExplicitTop = 100
+    ExplicitWidth = 741
+    ExplicitHeight = 238
+    object tsStandartView: TTabSheet
+      Caption = 'По станціях'
+      ExplicitWidth = 723
+      ExplicitHeight = 176
+      object Splitter1: TSplitter
+        Left = 185
+        Top = 0
+        Width = 6
+        Height = 203
+        Color = clBtnFace
+        ParentColor = False
+        ExplicitLeft = 182
+        ExplicitTop = 81
+        ExplicitHeight = 187
+      end
+      object DBGrid2: TDBGrid
+        Left = 0
+        Top = 0
+        Width = 185
+        Height = 203
+        Align = alLeft
+        DataSource = dsEnObj
+        Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+        TabOrder = 0
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -11
+        TitleFont.Name = 'Tahoma'
+        TitleFont.Style = []
+        Columns = <
+          item
+            Expanded = False
+            FieldName = 'Name'
+            Visible = True
+          end>
+      end
+      object DBGrid1: TDBGrid
+        Left = 191
+        Top = 0
+        Width = 515
+        Height = 203
+        Align = alClient
+        DataSource = dsStationData
+        TabOrder = 1
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -11
+        TitleFont.Name = 'Tahoma'
+        TitleFont.Style = []
+        Columns = <
+          item
+            Expanded = False
+            FieldName = 'Code'
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'CodeName'
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'Income'
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'Costs'
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'Remains'
+            Visible = True
+          end>
+      end
+    end
+    object tsExtView: TTabSheet
+      Caption = 'Загалом'
+      ImageIndex = 1
+      ExplicitWidth = 713
+      ExplicitHeight = 233
+      object grdStationDataClone: TDBGrid
+        Left = 0
+        Top = 0
+        Width = 706
+        Height = 203
+        Align = alClient
+        DataSource = dsStationDataClone
+        TabOrder = 0
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -11
+        TitleFont.Name = 'Tahoma'
+        TitleFont.Style = []
+        Columns = <
+          item
+            Expanded = False
+            FieldName = 'EnObjName'
+            ReadOnly = True
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'CodeName'
+            Width = 64
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'Income'
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'Costs'
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'Remains'
+            Visible = True
+          end>
+      end
+    end
   end
   object mmMain: TMainMenu
     Left = 160
     Top = 86
     object miDovPalyvo: TMenuItem
       Action = acShowFuelRefBook
+    end
+    object N3: TMenuItem
+      Action = acOpenSettings
     end
     object N1: TMenuItem
       Caption = 'Допомога'
@@ -217,7 +277,7 @@ object frmMain: TfrmMain
     Top = 86
   end
   object dsParams: TDataSource
-    DataSet = dmMain.cdsParams
+    DataSet = dmMain.mtParams
     Left = 108
     Top = 87
   end
@@ -233,7 +293,7 @@ object frmMain: TfrmMain
       OnExecute = acSendInfoExecute
     end
     object acOpenSettings: TAction
-      Caption = '@'
+      Caption = 'Налаштування'
       OnExecute = acOpenSettingsExecute
     end
     object acShowFuelRefBook: TAction
@@ -262,13 +322,18 @@ object frmMain: TfrmMain
     Top = 87
   end
   object dsStationData: TDataSource
-    DataSet = dmMain.cdsStationData
+    DataSet = dmMain.mtStationData
     Left = 48
     Top = 87
   end
   object dsEnObj: TDataSource
-    DataSet = dmMain.cdsEnObj
+    DataSet = dmMain.mtEnObj
     Left = 48
     Top = 136
+  end
+  object dsStationDataClone: TDataSource
+    DataSet = dmMain.mtStationDataClone
+    Left = 116
+    Top = 139
   end
 end

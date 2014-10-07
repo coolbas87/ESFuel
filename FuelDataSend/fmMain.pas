@@ -10,7 +10,8 @@ uses
   IdSSLOpenSSL, Vcl.Menus, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.ComCtrls,
   Data.DB, Vcl.ActnList, Vcl.StdActns, System.Actions, IdTCPConnection, IdTCPClient,
   IdExplicitTLSClientServerBase, IdMessageClient,
-  IdSMTPBase, IdSMTP, IdAttachmentFile, IdMessage, Vcl.Grids, Vcl.DBGrids;
+  IdSMTPBase, IdSMTP, IdAttachmentFile, IdMessage, Vcl.Grids, Vcl.DBGrids,
+  Vcl.ToolWin, Vcl.ImgList;
 
 type
   TDBRadioGroupCrack = class(TDBRadioGroup); // так делать нехорошо, но если очень надо...
@@ -24,7 +25,6 @@ type
     Panel1: TPanel;
     bExit: TButton;
     bSend: TButton;
-    bSetings: TButton;
     Panel2: TPanel;
     lblDaniCaption: TLabel;
     dtpDate: TDateTimePicker;
@@ -37,11 +37,17 @@ type
     IdMessage: TIdMessage;
     acOpenSettings: TAction;
     acShowFuelRefBook: TAction;
-    DBGrid1: TDBGrid;
     dsStationData: TDataSource;
     dsEnObj: TDataSource;
+    PageControl1: TPageControl;
+    tsStandartView: TTabSheet;
+    tsExtView: TTabSheet;
     DBGrid2: TDBGrid;
     Splitter1: TSplitter;
+    DBGrid1: TDBGrid;
+    grdStationDataClone: TDBGrid;
+    dsStationDataClone: TDataSource;
+    N3: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure dtpDateChange(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -71,16 +77,16 @@ end;
 
 procedure TfrmMain.rgLayoutTypeChange(Sender: TObject);
 begin
-  if dmMain.cdsParams.State in dsEditModes then begin
+  if dmMain.mtParams.State in dsEditModes then begin
     TDBRadioGroupCrack(rgLayoutType).DataLink.Modified;
-    dmMain.cdsParams.UpdateRecord;
+    dmMain.mtParams.UpdateRecord;
   end;
 end;
 
 procedure TfrmMain.acOpenSettingsExecute(Sender: TObject);
 begin
   if Assigned(dmMain) then begin
-    TfrmSettings.Execute(dmMain.cdsParams);
+    TfrmSettings.Execute(dmMain.mtParams);
     dmMain.SaveSettings;
   end;
 end;
@@ -91,29 +97,29 @@ var
   Attach: TIdAttachmentFile;
 begin
   if Assigned(dmMain) then begin
-    dmMain.cdsEnObj.First;
-    while not dmMain.cdsEnObj.Eof do begin
+    dmMain.mtEnObj.First;
+    while not dmMain.mtEnObj.Eof do begin
       Filename := GetLayoutFile;
       if FileExists(Filename) then begin
         Attach := TIdAttachmentFile.Create(IdMessage.MessageParts, Filename);
         try
-          From := dmMain.cdsParamsEmailFrom.AsString;
+          From := dmMain.mtParamsEmailFrom.AsString;
           IdMessage.Body.Add(ExtractFileName(Filename));
           IdMessage.From.Text := From;
-          IdMessage.Recipients.EMailAddresses := dmMain.cdsParamsEmailTo.AsString;
-          IdMessage.Subject := dmMain.cdsParamsEmailSubject.AsString;
+          IdMessage.Recipients.EMailAddresses := dmMain.mtParamsEmailTo.AsString;
+          IdMessage.Subject := dmMain.mtParamsEmailSubject.AsString;
           IdMessage.Priority := TIdMessagePriority(mpNormal);
           MsgID := GetUniqueMesID(From);
           IdMessage.MsgId := MsgID;
           IdMessage.ExtraHeaders.Add(Format(SMsgIDHeaderFmt, [MsgID]));
-          IdSMTP.Username := dmMain.cdsParamsMailSrvLogin.AsString;
-          IdSMTP.Password := dmMain.cdsParamsMailSrvPaswd.AsString;
-          IdSMTP.Host := dmMain.cdsParamsMailSrvHost.AsString;
-          if dmMain.cdsParamsUseSecurityConn.AsBoolean then
+          IdSMTP.Username := dmMain.mtParamsMailSrvLogin.AsString;
+          IdSMTP.Password := dmMain.mtParamsMailSrvPaswd.AsString;
+          IdSMTP.Host := dmMain.mtParamsMailSrvHost.AsString;
+          if dmMain.mtParamsUseSecurityConn.AsBoolean then
             IdSMTP.UseTLS:=utUseImplicitTLS
           else
             IdSMTP.UseTLS:=utNoTLSSupport;
-          IdSMTP.Port := dmMain.cdsParamsMailSrvPort.AsInteger;
+          IdSMTP.Port := dmMain.mtParamsMailSrvPort.AsInteger;
           try
             IdSMTP.Connect;
             try
@@ -128,7 +134,7 @@ begin
           FreeAndNil(Attach);
         end;
       end;
-      dmMain.cdsEnObj.Next;
+      dmMain.mtEnObj.Next;
     end;
   end;
 end;
@@ -136,7 +142,7 @@ end;
 procedure TfrmMain.acShowFuelRefBookExecute(Sender: TObject);
 begin
   if Assigned(dmMain) then
-    TfrmFuelTypesRef.Execute(dmMain.cdsFuelRef);
+    TfrmFuelTypesRef.Execute(dmMain.mtFuelRef);
 end;
 
 procedure TfrmMain.dtpDateChange(Sender: TObject);
@@ -156,9 +162,9 @@ var
 begin
   UserCanceled := False;
   if Assigned(dmMain) then begin
-    if (dmMain.cdsParamsstID.AsInteger <= 0) or not dmMain.cdsStationsRef.Locate(SFldstID,
-      dmMain.cdsParamsstID.AsInteger, []) then begin
-      UserCanceled := not TfrmSelectStation.Execute(dmMain.cdsParams);
+    if (dmMain.mtParamsstID.AsInteger <= 0) or not dmMain.mtStationsRef.Locate(SFldstID,
+      dmMain.mtParamsstID.AsInteger, []) then begin
+      UserCanceled := not TfrmSelectStation.Execute(dmMain.mtParams);
       dmMain.SaveSettings(True);
     end;
     if not UserCanceled then begin
@@ -175,17 +181,17 @@ var
 //  CurFrame: TfrmBaseStationFrame;
 begin
   Filename := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0))) + SSendedFilesFolder;
-//  CurFrame := FBaseFrames.Items[dmMain.cdsEnObjIDEnObj.AsInteger];
+//  CurFrame := FBaseFrames.Items[dmMain.mtEnObjIDEnObj.AsInteger];
   if not DirectoryExists(Filename) then
     if not CreateDir(Filename) then
       raise Exception.CreateFmt(SCantCreateDirectory, [Filename]);
-  Filename := IncludeTrailingPathDelimiter(Filename) + Format(SConcatFmt, [dmMain.cdsEnObjFilename.AsString,
+  Filename := IncludeTrailingPathDelimiter(Filename) + Format(SConcatFmt, [dmMain.mtEnObjFilename.AsString,
     dmMain.GetLayoutDate(SDateFmtLayoutFname)]);
   Layout := TStringList.Create;
   try
     Layout.Add(Format(SFmtLayoutHeader, [dmMain.GetLayoutType, dmMain.GetLayoutDate(SFmtLayoutDate),
-      dmMain.cdsEnObjCipher.AsString]));
-//    CurFrame.GetLayout(Layout);
+      dmMain.mtEnObjCipher.AsString]));
+    dmMain.GetLayout(Layout);
     Layout.Add(SLayoutEnd);
     Filename := ChangeFileExt(Filename, dmMain.GetLayoutFileExt);
     Layout.SaveToFile(Filename);
