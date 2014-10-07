@@ -189,7 +189,7 @@ object frmSettings: TfrmSettings
     Left = 130
     Top = 66
     object acToggleUseSecConnection: TAction
-      Caption = 'Захищене з’єднання (TLS)'
+      Caption = 'Захищене з’єднання (SSL)'
       OnExecute = acToggleUseSecConnectionExecute
     end
   end

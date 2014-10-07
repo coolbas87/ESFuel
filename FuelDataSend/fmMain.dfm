@@ -26,8 +26,6 @@ object frmMain: TfrmMain
     Height = 40
     Align = alBottom
     TabOrder = 0
-    ExplicitTop = 312
-    ExplicitWidth = 741
     DesignSize = (
       734
       40)
@@ -40,7 +38,6 @@ object frmMain: TfrmMain
       Anchors = [akTop, akRight]
       Cancel = True
       TabOrder = 1
-      ExplicitLeft = 660
     end
     object bSend: TButton
       Left = 527
@@ -51,7 +48,6 @@ object frmMain: TfrmMain
       Anchors = [akTop, akRight]
       Default = True
       TabOrder = 0
-      ExplicitLeft = 534
     end
   end
   object Panel2: TPanel
@@ -64,7 +60,6 @@ object frmMain: TfrmMain
     AutoSize = True
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitWidth = 735
     object lblDaniCaption: TLabel
       Left = 7
       Top = 3
@@ -106,7 +101,6 @@ object frmMain: TfrmMain
       '0'
       '1')
     OnChange = rgLayoutTypeChange
-    ExplicitWidth = 729
   end
   object PageControl1: TPageControl
     Left = 0
@@ -118,13 +112,8 @@ object frmMain: TfrmMain
     MultiLine = True
     TabOrder = 3
     TabPosition = tpRight
-    ExplicitTop = 100
-    ExplicitWidth = 741
-    ExplicitHeight = 238
     object tsStandartView: TTabSheet
       Caption = 'По станціях'
-      ExplicitWidth = 723
-      ExplicitHeight = 176
       object Splitter1: TSplitter
         Left = 185
         Top = 0
@@ -201,8 +190,6 @@ object frmMain: TfrmMain
     object tsExtView: TTabSheet
       Caption = 'Загалом'
       ImageIndex = 1
-      ExplicitWidth = 713
-      ExplicitHeight = 233
       object grdStationDataClone: TDBGrid
         Left = 0
         Top = 0
@@ -265,17 +252,6 @@ object frmMain: TfrmMain
       Action = acClose
     end
   end
-  object IdSSLIOHandlerSocketOpenSSL1: TIdSSLIOHandlerSocketOpenSSL
-    Destination = ':25'
-    MaxLineAction = maException
-    Port = 25
-    DefaultPort = 0
-    SSLOptions.Mode = sslmUnassigned
-    SSLOptions.VerifyMode = []
-    SSLOptions.VerifyDepth = 0
-    Left = 270
-    Top = 86
-  end
   object dsParams: TDataSource
     DataSet = dmMain.mtParams
     Left = 108
@@ -300,26 +276,6 @@ object frmMain: TfrmMain
       Caption = 'Довідник видів палива'
       OnExecute = acShowFuelRefBookExecute
     end
-  end
-  object IdSMTP: TIdSMTP
-    IOHandler = IdSSLIOHandlerSocketOpenSSL1
-    SASLMechanisms = <>
-    Left = 440
-    Top = 87
-  end
-  object IdMessage: TIdMessage
-    AttachmentEncoding = 'UUE'
-    BccList = <>
-    CCList = <>
-    Encoding = meDefault
-    FromList = <
-      item
-      end>
-    Recipients = <>
-    ReplyTo = <>
-    ConvertPreamble = True
-    Left = 488
-    Top = 87
   end
   object dsStationData: TDataSource
     DataSet = dmMain.mtStationData

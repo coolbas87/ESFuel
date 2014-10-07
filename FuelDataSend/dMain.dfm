@@ -411,4 +411,35 @@ object dmMain: TdmMain
       Required = True
     end
   end
+  object IdSSLIOHandlerSocketOpenSSL1: TIdSSLIOHandlerSocketOpenSSL
+    Destination = ':25'
+    MaxLineAction = maException
+    Port = 25
+    DefaultPort = 0
+    SSLOptions.Mode = sslmUnassigned
+    SSLOptions.VerifyMode = []
+    SSLOptions.VerifyDepth = 0
+    Left = 166
+    Top = 182
+  end
+  object IdSMTP: TIdSMTP
+    IOHandler = IdSSLIOHandlerSocketOpenSSL1
+    SASLMechanisms = <>
+    Left = 296
+    Top = 183
+  end
+  object IdMessage: TIdMessage
+    AttachmentEncoding = 'UUE'
+    BccList = <>
+    CCList = <>
+    Encoding = meDefault
+    FromList = <
+      item
+      end>
+    Recipients = <>
+    ReplyTo = <>
+    ConvertPreamble = True
+    Left = 362
+    Top = 183
+  end
 end

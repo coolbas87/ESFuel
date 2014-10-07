@@ -7,7 +7,10 @@ uses
   msxml, FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, FireDAC.UI.Intf,
-  FireDAC.VCLUI.Wait, FireDAC.Comp.UI;
+  FireDAC.VCLUI.Wait, FireDAC.Comp.UI, IdAttachmentFile, IdMessage,
+  IdTCPConnection, IdTCPClient, IdExplicitTLSClientServerBase, IdMessageClient,
+  IdSMTPBase, IdSMTP, IdBaseComponent, IdComponent, IdIOHandler,
+  IdIOHandlerSocket, IdIOHandlerStack, IdSSL, IdSSLOpenSSL;
 
 type
   TdmMain = class(TDataModule)
@@ -68,6 +71,9 @@ type
     mtStationDataCloneIncome: TIntegerField;
     mtStationDataCloneCosts: TIntegerField;
     mtStationDataCloneRemains: TIntegerField;
+    IdSSLIOHandlerSocketOpenSSL1: TIdSSLIOHandlerSocketOpenSSL;
+    IdSMTP: TIdSMTP;
+    IdMessage: TIdMessage;
     procedure DataModuleCreate(Sender: TObject);
     procedure mtFuelTypesNewRecord(DataSet: TDataSet);
     procedure mtStationDataNewRecord(DataSet: TDataSet);
@@ -78,17 +84,20 @@ type
   private
     FDateChanging: Boolean;
     procedure GetFuelList(AXMLDoc: DOMDocument);
+    procedure GetLayout(ALayout: TStringList);
+    function GetLayoutDate(const ADateFormat: String): String;
+    function GetLayoutFile: String;
+    function GetLayoutFileExt: String;
+    function GetLayoutType: String;
     procedure GetStationsList(AXMLDoc: DOMDocument);
     function GetSubNodeValue(ANode: IXMLDOMElement; const ANodeName: String): Variant;
     procedure LoadSettings;
+    procedure SetMailParams(const AFilename: String);
   public
-    procedure GetLayout(ALayout: TStringList);
-    function GetLayoutDate(const ADateFormat: String): String;
-    function GetLayoutFileExt: String;
-    function GetLayoutType: String;
     procedure FillStationData;
     procedure SaveSettings(AOnlyStationID: Boolean = False);
     procedure SetDataDate(AValue: TDateTime);
+    procedure SendEmail;
     procedure SynchronizeDataDate;
   end;
 
@@ -179,30 +188,53 @@ begin
 end;
 
 procedure TdmMain.GetLayout(ALayout: TStringList);
+var
+  BM: TBookmark;
 begin
   if Assigned(ALayout) then begin
-//    if FHasCoal then begin
-//      ALayout.Add(Format(SLayoutLineFmt, [cdsStationDataCoalCode.AsInteger, IncomeValueIndex,
-//        cdsStationDataCoalIncome.AsInteger]));
-//      ALayout.Add(Format(SLayoutLineFmt, [cdsStationDataCoalCode.AsInteger, CostsValueIndex,
-//        cdsStationDataCoalCosts.AsInteger]));
-//      ALayout.Add(Format(SLayoutLineFmt, [cdsStationDataCoalCode.AsInteger, RemainsValueIndex,
-//        cdsStationDataCoalRemains.AsInteger]));
-//    end;
-//    if FHasMasut then begin
-//      ALayout.Add(Format(SLayoutLineFmt, [cdsStationDataMasutCode.AsInteger, IncomeValueIndex,
-//        cdsStationDataMasutIncome.AsInteger]));
-//      ALayout.Add(Format(SLayoutLineFmt, [cdsStationDataMasutCode.AsInteger, CostsValueIndex,
-//        cdsStationDataMasutCosts.AsInteger]));
-//      ALayout.Add(Format(SLayoutLineFmt, [cdsStationDataMasutCode.AsInteger, RemainsValueIndex,
-//        cdsStationDataMasutRemains.AsInteger]));
-//      if FHasOtherOrgs then
-//        ALayout.Add(Format(SLayoutLineFmt, [cdsStationDataMasutCode.AsInteger, OtherOrgsValueIndex,
-//          cdsStationDataMasutOtherOrgsRemains.AsInteger]));
-//    end;
-//    if FHasGas then
-//      ALayout.Add(Format(SLayoutLineFmt, [cdsStationDataGasCode.AsInteger, RemainsValueIndex,
-//        cdsStationDataGasCosts.AsInteger]));
+    mtStationData.DisableControls;
+    try
+      BM := mtStationData.Bookmark;
+      mtStationData.First;
+      while not mtStationData.Eof do begin
+        ALayout.Add(Format(SLayoutLineFmt, [mtStationDataCode.AsInteger, IncomeValueIndex,
+          mtStationDataIncome.AsInteger]));
+        ALayout.Add(Format(SLayoutLineFmt, [mtStationDataCode.AsInteger, CostsValueIndex,
+          mtStationDataCosts.AsInteger]));
+        ALayout.Add(Format(SLayoutLineFmt, [mtStationDataCode.AsInteger, RemainsValueIndex,
+          mtStationDataRemains.AsInteger]));
+        mtStationData.Next;
+      end;
+      if mtStationData.BookmarkValid(BM) then
+        mtStationData.Bookmark := BM;
+    finally
+      mtStationData.EnableControls;
+    end;
+  end;
+end;
+
+function TdmMain.GetLayoutFile: String;
+var
+  Layout: TStringList;
+  Filename: String;
+begin
+  Filename := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0))) + SSendedFilesFolder;
+  if not DirectoryExists(Filename) then
+    if not CreateDir(Filename) then
+      raise Exception.CreateFmt(SCantCreateDirectory, [Filename]);
+  Filename := IncludeTrailingPathDelimiter(Filename) + Format(SConcatFmt, [mtEnObjFilename.AsString,
+    GetLayoutDate(SDateFmtLayoutFname)]);
+  Layout := TStringList.Create;
+  try
+    Layout.Add(Format(SFmtLayoutHeader, [GetLayoutType, GetLayoutDate(SFmtLayoutDate),
+      mtEnObjCipher.AsString]));
+    GetLayout(Layout);
+    Layout.Add(SLayoutEnd);
+    Filename := ChangeFileExt(Filename, GetLayoutFileExt);
+    Layout.SaveToFile(Filename);
+    Result := Filename;
+  finally
+    FreeAndNil(Layout);
   end;
 end;
 
@@ -366,6 +398,47 @@ begin
   end;
 end;
 
+procedure TdmMain.SendEmail;
+var
+  Filename: String;
+  Attach: TIdAttachmentFile;
+  BM: TBookmark;
+begin
+  mtEnObj.DisableControls;
+  try
+    BM := mtEnObj.Bookmark;
+    mtEnObj.First;
+    while not mtEnObj.Eof do begin
+      Filename := GetLayoutFile;
+      if FileExists(Filename) then begin
+        Attach := TIdAttachmentFile.Create(IdMessage.MessageParts, Filename);
+        try
+          SetMailParams(Filename);
+          try
+            IdSMTP.Connect;
+            try
+              IdSMTP.Send(IdMessage);
+            finally
+              IdSMTP.Disconnect;
+            end;
+          except
+            on E: Exception do begin
+              raise Exception.CreateFmt(SFileNotSended, [Filename, E.Message]);
+            end;
+          end;
+        finally
+          FreeAndNil(Attach);
+        end;
+      end;
+      mtEnObj.Next;
+    end;
+    if mtEnObj.BookmarkValid(BM) then
+      mtEnObj.Bookmark := BM;
+  finally
+    mtEnObj.EnableControls;
+  end;
+end;
+
 procedure TdmMain.SetDataDate(AValue: TDateTime);
 begin
   // Нет стадартного DB-компонента для редактирования даты, делаем через прцоедуру
@@ -381,6 +454,29 @@ begin
   end;
 end;
 
+procedure TdmMain.SetMailParams(const AFilename: String);
+var
+  From, MsgID: String;
+begin
+  From := mtParamsEmailFrom.AsString;
+  IdMessage.Body.Add(ExtractFileName(AFilename));
+  IdMessage.From.Text := From;
+  IdMessage.Recipients.EMailAddresses := mtParamsEmailTo.AsString;
+  IdMessage.Subject := mtParamsEmailSubject.AsString;
+  IdMessage.Priority := TIdMessagePriority(mpNormal);
+  MsgID := GetUniqueMesID(From);
+  IdMessage.MsgId := MsgID;
+  IdMessage.ExtraHeaders.Add(Format(SMsgIDHeaderFmt, [MsgID]));
+  IdSMTP.Username := mtParamsMailSrvLogin.AsString;
+  IdSMTP.Password := mtParamsMailSrvPaswd.AsString;
+  IdSMTP.Host := mtParamsMailSrvHost.AsString;
+  if mtParamsUseSecurityConn.AsBoolean then
+    IdSMTP.UseTLS := utUseImplicitTLS
+  else
+    IdSMTP.UseTLS := utNoTLSSupport;
+  IdSMTP.Port := mtParamsMailSrvPort.AsInteger;
+end;
+
 procedure TdmMain.SynchronizeDataDate;
 begin
   if not FDateChanging then begin
@@ -393,5 +489,7 @@ begin
     end;
   end;
 end;
+
+
 
 end.

@@ -9,7 +9,7 @@ resourcestring
   SDateMoreThenToday = 'Дата не може бути більше ніж вчорашня';
   SCloseApp = 'Закрити програму?';
   SCantCreateDirectory = 'Не вдалося створити папку ''%s''. Можливо недостатньо прав для запису в папку';
-  SFileNotSended = 'Файл ''%s'' не відіслано';
+  SFileNotSended = 'Файл ''%s'' не відіслано' + sLineBreak + 'Помилка: %s';
   SFileNotFound = 'Файл ''%s'' не знайдено';
 
 const
