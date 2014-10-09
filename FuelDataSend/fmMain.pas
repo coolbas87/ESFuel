@@ -33,7 +33,7 @@ type
     acShowFuelRefBook: TAction;
     dsStationData: TDataSource;
     dsEnObj: TDataSource;
-    PageControl1: TPageControl;
+    pcMain: TPageControl;
     tsStandartView: TTabSheet;
     tsExtView: TTabSheet;
     DBGrid2: TDBGrid;
@@ -50,6 +50,7 @@ type
     procedure acSendInfoExecute(Sender: TObject);
     procedure acOpenSettingsExecute(Sender: TObject);
     procedure acShowFuelRefBookExecute(Sender: TObject);
+    procedure ActionListUpdate(Action: TBasicAction; var Handled: Boolean);
   end;
 
 var
@@ -95,6 +96,11 @@ begin
     TfrmFuelTypesRef.Execute(dmMain.mtFuelRef);
 end;
 
+procedure TfrmMain.ActionListUpdate(Action: TBasicAction; var Handled: Boolean);
+begin
+  acSendInfo.Enabled := Assigned(dsStationDataClone.DataSet) and not dsStationDataClone.DataSet.IsEmpty;
+end;
+
 procedure TfrmMain.dtpDateChange(Sender: TObject);
 begin
   dmMain.SetDataDate(dtpDate.DateTime);
@@ -120,6 +126,11 @@ begin
     if not UserCanceled then begin
       dmMain.FillStationData;
       dmMain.SynchronizeDataDate;
+      if dmMain.IsSingleStation then begin
+        tsStandartView.TabVisible := False;
+        tsExtView.TabVisible := False;
+        pcMain.ActivePage := tsStandartView;
+      end;
     end;
   end;
 end;

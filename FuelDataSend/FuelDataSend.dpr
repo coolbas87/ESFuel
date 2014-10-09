@@ -12,7 +12,8 @@ uses
   uPalyvoStations in 'uPalyvoStations.pas',
   fmSelectStation in 'fmSelectStation.pas' {frmSelectStation},
   fmSettings in 'fmSettings.pas' {frmSettings},
-  fmFuelTypesRef in 'fmFuelTypesRef.pas' {frmFuelTypesRef};
+  fmFuelTypesRef in 'fmFuelTypesRef.pas' {frmFuelTypesRef},
+  Data.DBConsts in 'Data.DBConsts.pas';
 
 {$R *.res}
 

@@ -81,6 +81,7 @@ type
     procedure mtParamsDataDateChange(Sender: TField);
     procedure mtParamsDataDateValidate(Sender: TField);
     procedure mtParamsUseSecurityConnChange(Sender: TField);
+    procedure mtParamsBeforePost(DataSet: TDataSet);
   private
     FDateChanging: Boolean;
     procedure GetFuelList(AXMLDoc: DOMDocument);
@@ -95,6 +96,7 @@ type
     procedure SetMailParams(const AFilename: String);
   public
     procedure FillStationData;
+    function IsSingleStation: Boolean;
     procedure SaveSettings(AOnlyStationID: Boolean = False);
     procedure SetDataDate(AValue: TDateTime);
     procedure SendEmail;
@@ -129,7 +131,7 @@ begin
   mtParamsDataDate.AsDateTime := Trunc(Yesterday);
   mtParamsLayout.AsInteger := DailyLayout;
   LoadSettings;
-  mtParams.CheckBrowseMode;
+//  mtParams.CheckBrowseMode;
 end;
 
 procedure TdmMain.mtStationDataNewRecord(DataSet: TDataSet);
@@ -296,7 +298,7 @@ begin
             mtEnObj.CheckBrowseMode;
           end;
       end;
-      mtEnObjClone.CloneCursor(mtEnObj, True, False);
+      mtEnObjClone.CloneCursor(mtEnObj);
   end;
 end;
 
@@ -312,13 +314,23 @@ begin
   end;
 end;
 
+function TdmMain.IsSingleStation: Boolean;
+begin
+  Result := mtEnObj.RecordCount <= 1;
+end;
+
 procedure TdmMain.LoadSettings;
 var
   Settings: TIniFile;
+  stID: Integer;
 begin
   Settings := TIniFile.Create(IncludeTrailingPathDelimiter(ExtractFileDir(ParamStr(0))) + SSetingsFileName);
   try
-    mtParamsstID.AsInteger := Settings.ReadInteger(SProgramSngsSection, SStationID, 0);
+    stID := Settings.ReadInteger(SProgramSngsSection, SStationID, 0);
+    if stID = 0 then
+      mtParamsstID.Clear
+    else
+      mtParamsstID.AsInteger := stID;
     mtParamsEmailFrom.AsString := Settings.ReadString(SEmailSngsSection, SEmailFromSngs,
       mtParamsEmailFrom.AsString);
     mtParamsEmailTo.AsString := Settings.ReadString(SEmailSngsSection, SEmailToSngs,
@@ -343,6 +355,12 @@ end;
 procedure TdmMain.mtFuelTypesNewRecord(DataSet: TDataSet);
 begin
   mtFuelTypesIDEnObj.AsInteger := mtEnObjIDEnObj.AsInteger;
+end;
+
+procedure TdmMain.mtParamsBeforePost(DataSet: TDataSet);
+begin
+  // ”порно не хотело работать Required на поле с ID станции
+
 end;
 
 procedure TdmMain.mtParamsDataDateChange(Sender: TField);
@@ -471,7 +489,7 @@ begin
   IdSMTP.Password := mtParamsMailSrvPaswd.AsString;
   IdSMTP.Host := mtParamsMailSrvHost.AsString;
   if mtParamsUseSecurityConn.AsBoolean then
-    IdSMTP.UseTLS := utUseImplicitTLS
+    IdSMTP.UseTLS := utUseRequireTLS
   else
     IdSMTP.UseTLS := utNoTLSSupport;
   IdSMTP.Port := mtParamsMailSrvPort.AsInteger;

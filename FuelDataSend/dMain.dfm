@@ -29,6 +29,7 @@ object dmMain: TdmMain
         DataType = ftBoolean
       end>
     IndexDefs = <>
+    IndexFieldNames = 'Code'
     FetchOptions.AssignedValues = [evMode]
     FetchOptions.Mode = fmAll
     ResourceOptions.AssignedValues = [rvSilentMode]
@@ -58,6 +59,7 @@ object dmMain: TdmMain
   object mtFuelRefClone: TFDMemTable
     FieldDefs = <>
     IndexDefs = <>
+    IndexFieldNames = 'Code'
     FetchOptions.AssignedValues = [evMode]
     FetchOptions.Mode = fmAll
     ResourceOptions.AssignedValues = [rvSilentMode]
@@ -86,6 +88,7 @@ object dmMain: TdmMain
   end
   object FDGUIxWaitCursor1: TFDGUIxWaitCursor
     Provider = 'Forms'
+    ScreenCursor = gcrDefault
     Left = 40
     Top = 144
   end
@@ -131,6 +134,7 @@ object dmMain: TdmMain
       Size = 5
     end
     object mtEnObjName: TStringField
+      DisplayLabel = 'Назва'
       DisplayWidth = 25
       FieldName = 'Name'
       Size = 100
@@ -246,6 +250,7 @@ object dmMain: TdmMain
     end
   end
   object mtParams: TFDMemTable
+    BeforePost = mtParamsBeforePost
     FetchOptions.AssignedValues = [evMode]
     FetchOptions.Mode = fmAll
     ResourceOptions.AssignedValues = [rvSilentMode]
@@ -257,7 +262,6 @@ object dmMain: TdmMain
     object mtParamsstID: TIntegerField
       DisplayLabel = 'Станція'
       FieldName = 'stID'
-      Required = True
     end
     object mtParamsstIDName: TStringField
       DisplayLabel = 'Станція'
@@ -267,7 +271,6 @@ object dmMain: TdmMain
       LookupKeyFields = 'stID'
       LookupResultField = 'Name'
       KeyFields = 'stID'
-      Required = True
       Size = 100
       Lookup = True
     end

@@ -102,7 +102,7 @@ object frmMain: TfrmMain
       '1')
     OnChange = rgLayoutTypeChange
   end
-  object PageControl1: TPageControl
+  object pcMain: TPageControl
     Left = 0
     Top = 71
     Width = 734
@@ -207,13 +207,11 @@ object frmMain: TfrmMain
           item
             Expanded = False
             FieldName = 'EnObjName'
-            ReadOnly = True
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CodeName'
-            Width = 64
             Visible = True
           end
           item
@@ -258,6 +256,7 @@ object frmMain: TfrmMain
     Top = 87
   end
   object ActionList: TActionList
+    OnUpdate = ActionListUpdate
     Left = 384
     Top = 85
     object acClose: TAction
