@@ -109,7 +109,7 @@ var
 implementation
 
 uses
-  System.IOUtils, System.Variants, System.DateUtils, fmMain,
+  System.IOUtils, System.Variants, System.DateUtils, Data.DBConsts, fmMain,
   uPalyvoStations;
 
 {$R *.dfm}
@@ -359,8 +359,9 @@ end;
 
 procedure TdmMain.mtParamsBeforePost(DataSet: TDataSet);
 begin
-  // ”порно не хотело работать Required на поле с ID станции
-
+  // ”порно не хотело работать Required на поле с ID станции, делаем руками
+  if mtParamsstID.IsNull then
+    raise Exception.CreateFmt(SFieldRequired, [mtParamsstID.DisplayName]);
 end;
 
 procedure TdmMain.mtParamsDataDateChange(Sender: TField);
