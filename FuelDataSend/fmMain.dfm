@@ -36,7 +36,6 @@ object frmMain: TfrmMain
       Height = 27
       Action = acClose
       Anchors = [akTop, akRight]
-      Cancel = True
       TabOrder = 1
     end
     object bSend: TButton
@@ -46,7 +45,6 @@ object frmMain: TfrmMain
       Height = 27
       Action = acSendInfo
       Anchors = [akTop, akRight]
-      Default = True
       TabOrder = 0
     end
   end
@@ -125,7 +123,7 @@ object frmMain: TfrmMain
         ExplicitTop = 81
         ExplicitHeight = 187
       end
-      object DBGrid2: TDBGrid
+      object grdStations: TDBGrid
         Left = 0
         Top = 0
         Width = 185
@@ -146,7 +144,7 @@ object frmMain: TfrmMain
             Visible = True
           end>
       end
-      object DBGrid1: TDBGrid
+      object grdStationData: TDBGrid
         Left = 191
         Top = 0
         Width = 515

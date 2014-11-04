@@ -36,9 +36,9 @@ type
     pcMain: TPageControl;
     tsStandartView: TTabSheet;
     tsExtView: TTabSheet;
-    DBGrid2: TDBGrid;
+    grdStations: TDBGrid;
     Splitter1: TSplitter;
-    DBGrid1: TDBGrid;
+    grdStationData: TDBGrid;
     grdStationDataClone: TDBGrid;
     dsStationDataClone: TDataSource;
     N3: TMenuItem;

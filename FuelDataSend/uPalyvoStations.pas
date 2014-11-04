@@ -3,7 +3,7 @@ unit uPalyvoStations;
 interface
 
 uses
-  Winapi.Windows, System.SysUtils, Vcl.Forms, Vcl.Graphics;
+  Winapi.Windows, System.SysUtils, Data.DB, Vcl.Forms, Vcl.Graphics;
 
 resourcestring
   SDateMoreThenToday = 'Дата не може бути більше ніж вчорашня';
@@ -11,6 +11,8 @@ resourcestring
   SCantCreateDirectory = 'Не вдалося створити папку ''%s''. Можливо недостатньо прав для запису в папку';
   SFileNotSended = 'Файл ''%s'' не відіслано' + sLineBreak + 'Помилка: %s';
   SFileNotFound = 'Файл ''%s'' не знайдено';
+  SFuelPresent = 'Тип палива "%s" вже існує у таблиці';
+  SFuelForStationPresent = 'Для станції "%s" вже існує тип палива "%s"';
 
 const
   SStationsFile = 'Stations.xml';
@@ -26,7 +28,7 @@ const
   SFldIsActive = 'IsActive';
   SName = 'Name';
   SFldID = 'ID';
-  SCode = 'Code';
+  SFldCode = 'Code';
   SFmtLayoutDate = 'ddmmyy';
   SDateFmtLayoutFname = 'ddmm';
   SFmtLayoutHeader = '((//%s:%s:%s:++';
@@ -51,6 +53,8 @@ const
   SEmailSngsSection = 'EmailSettings';
   SMailSrvSection = 'MailServerSettings';
   SFuel = 'Fuel';
+  ItemDelimiter = ';';
+  SExtViewCheckDoublets = 'Code;IDEnObj';
 
   DailyLayout = 0;
   MonthLayout = 1;
@@ -64,10 +68,14 @@ const
   SMTPStandPort = 25;
   SMTPTLSPort = 465;
 
+function GetFieldsValues(ADataSet: TDataSet; const AFieldNames: String): Variant;
 function GetUniqueMesID(const AEmail: String): String;
 function MsgBox(const AText, ACaption: String; AFlags: Integer): Integer;
 
 implementation
+
+uses
+  System.Variants, System.Generics.Collections;
 
 function GetUniqueMesID(const AEmail: String): String;
 var
@@ -82,6 +90,25 @@ end;
 function MsgBox(const AText, ACaption: String; AFlags: Integer): Integer;
 begin
   Result := MessageBox(Application.Handle, PWideChar(AText), PWideChar(ACaption), AFlags);
+end;
+
+function GetFieldsValues(ADataSet: TDataSet; const AFieldNames: String): Variant;
+var
+  I: Integer;
+  Fields: TList<TField>;
+begin
+  if AFieldNames.Contains(ItemDelimiter) then begin
+    Fields := TList<TField>.Create;
+    try
+      ADataSet.GetFieldList(Fields, AFieldNames);
+      Result := VarArrayCreate([0, Fields.Count - 1], varVariant);
+      for I := 0 to Pred(Fields.Count) do
+        Result[I] := Fields[I].AsVariant;
+    finally
+      FreeAndNil(Fields);
+    end;
+  end else
+    Result := ADataSet.FieldByName(AFieldNames).AsVariant;
 end;
 
 end.

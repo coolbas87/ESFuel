@@ -3,14 +3,14 @@ unit dMain;
 interface
 
 uses
-  System.SysUtils, System.Classes, Data.DB, Datasnap.DBClient, System.IniFiles,
+  System.SysUtils, Data.DB, Datasnap.DBClient, System.IniFiles,
   msxml, FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, FireDAC.UI.Intf,
   FireDAC.VCLUI.Wait, FireDAC.Comp.UI, IdAttachmentFile, IdMessage,
   IdTCPConnection, IdTCPClient, IdExplicitTLSClientServerBase, IdMessageClient,
   IdSMTPBase, IdSMTP, IdBaseComponent, IdComponent, IdIOHandler,
-  IdIOHandlerSocket, IdIOHandlerStack, IdSSL, IdSSLOpenSSL;
+  IdIOHandlerSocket, IdIOHandlerStack, IdSSL, IdSSLOpenSSL, System.Classes;
 
 type
   TdmMain = class(TDataModule)
@@ -74,6 +74,14 @@ type
     IdSSLIOHandlerSocketOpenSSL1: TIdSSLIOHandlerSocketOpenSSL;
     IdSMTP: TIdSMTP;
     IdMessage: TIdMessage;
+    mtStationDataCloneCheck: TFDMemTable;
+    IntegerField2: TIntegerField;
+    StringField2: TStringField;
+    IntegerField3: TIntegerField;
+    StringField3: TStringField;
+    IntegerField4: TIntegerField;
+    IntegerField5: TIntegerField;
+    IntegerField6: TIntegerField;
     procedure DataModuleCreate(Sender: TObject);
     procedure mtFuelTypesNewRecord(DataSet: TDataSet);
     procedure mtStationDataNewRecord(DataSet: TDataSet);
@@ -82,8 +90,17 @@ type
     procedure mtParamsDataDateValidate(Sender: TField);
     procedure mtParamsUseSecurityConnChange(Sender: TField);
     procedure mtParamsBeforePost(DataSet: TDataSet);
+    procedure mtStationDataBeforePost(DataSet: TDataSet);
+    procedure mtStationDataCloneBeforePost(DataSet: TDataSet);
+    procedure mtStationDataBeforeEdit(DataSet: TDataSet);
+    procedure mtStationDataBeforeInsert(DataSet: TDataSet);
+    procedure mtStationDataAfterPost(DataSet: TDataSet);
+    procedure mtStationDataCloneAfterPost(DataSet: TDataSet);
+    procedure mtStationDataCloneBeforeEdit(DataSet: TDataSet);
+    procedure mtStationDataCloneBeforeInsert(DataSet: TDataSet);
   private
     FDateChanging: Boolean;
+    function IsHasDoublets(ADataSet, AClone: TDataSet; const ACheckFields: String): Boolean;
     procedure GetFuelList(AXMLDoc: DOMDocument);
     procedure GetLayout(ALayout: TStringList);
     function GetLayoutDate(const ADateFormat: String): String;
@@ -109,10 +126,17 @@ var
 implementation
 
 uses
-  System.IOUtils, System.Variants, System.DateUtils, Data.DBConsts, fmMain,
-  uPalyvoStations;
+  System.IOUtils, System.Variants, System.DateUtils, Data.DBConsts,
+  fmMain, uPalyvoStations;
 
 {$R *.dfm}
+
+function TdmMain.IsHasDoublets(ADataSet, AClone: TDataSet; const ACheckFields: String): Boolean;
+begin
+  Result := False;
+  if AClone.Locate(ACheckFields, GetFieldsValues(ADataSet, ACheckFields), []) then
+    Result := ADataSet.CompareBookmarks(ADataSet.Bookmark, AClone.Bookmark) <> 0;
+end;
 
 procedure TdmMain.DataModuleCreate(Sender: TObject);
 var
@@ -132,6 +156,53 @@ begin
   mtParamsLayout.AsInteger := DailyLayout;
   LoadSettings;
 //  mtParams.CheckBrowseMode;
+end;
+
+procedure TdmMain.mtStationDataAfterPost(DataSet: TDataSet);
+begin
+  mtStationDataCloneCheck.Close;
+end;
+
+procedure TdmMain.mtStationDataBeforeEdit(DataSet: TDataSet);
+begin
+  if mtStationData.Active then
+    mtStationDataCloneCheck.CloneCursor(mtStationData);
+end;
+
+procedure TdmMain.mtStationDataBeforeInsert(DataSet: TDataSet);
+begin
+  if mtStationData.Active then
+    mtStationDataCloneCheck.CloneCursor(mtStationData);
+end;
+
+procedure TdmMain.mtStationDataBeforePost(DataSet: TDataSet);
+begin
+  if IsHasDoublets(mtStationData, mtStationDataCloneCheck, SFldCode) then
+    raise Exception.CreateFmt(SFuelPresent, [mtStationDataCodeName.AsString]);
+end;
+
+procedure TdmMain.mtStationDataCloneAfterPost(DataSet: TDataSet);
+begin
+  mtStationDataCloneCheck.Close;
+end;
+
+procedure TdmMain.mtStationDataCloneBeforeEdit(DataSet: TDataSet);
+begin
+  if mtStationDataClone.Active then
+    mtStationDataCloneCheck.CloneCursor(mtStationData);
+end;
+
+procedure TdmMain.mtStationDataCloneBeforeInsert(DataSet: TDataSet);
+begin
+  if mtStationDataClone.Active then
+    mtStationDataCloneCheck.CloneCursor(mtStationData);
+end;
+
+procedure TdmMain.mtStationDataCloneBeforePost(DataSet: TDataSet);
+begin
+  if IsHasDoublets(mtStationDataClone, mtStationDataCloneCheck, SExtViewCheckDoublets) then
+    raise Exception.CreateFmt(SFuelPresent, [mtStationDataCloneCodeName.AsString,
+      mtStationDataCloneEnObjName.AsString]);
 end;
 
 procedure TdmMain.mtStationDataNewRecord(DataSet: TDataSet);
@@ -177,7 +248,7 @@ begin
     for i := 0 to Pred(List.length) do begin
       Node := List.item[i] as IXMLDOMElement;
       mtFuelRef.Insert;
-      mtFuelRefCode.AsVariant := Node.getAttribute(SCode);
+      mtFuelRefCode.AsVariant := Node.getAttribute(SFldCode);
       mtFuelRefName.AsVariant := Node.getAttribute(SName);
       mtFuelRefIsActive.AsVariant := Node.getAttribute(SFldIsActive);
       mtFuelRef.Post;
@@ -292,7 +363,7 @@ begin
               for K := 0 to Pred(FuelList.length) do begin
                 FuelNode := FuelList.item[K] as IXMLDOMElement;
                 mtFuelTypes.Append;
-                mtFuelTypesCode.AsVariant := FuelNode.getAttribute(SCode);
+                mtFuelTypesCode.AsVariant := FuelNode.getAttribute(SFldCode);
                 mtFuelTypes.CheckBrowseMode;
               end;
             mtEnObj.CheckBrowseMode;

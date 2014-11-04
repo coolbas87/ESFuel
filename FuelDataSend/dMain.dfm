@@ -2,7 +2,7 @@ object dmMain: TdmMain
   OldCreateOrder = False
   OnCreate = DataModuleCreate
   Height = 258
-  Width = 498
+  Width = 524
   object dsStationsRef: TDataSource
     DataSet = mtStationsRef
     Left = 184
@@ -168,6 +168,10 @@ object dmMain: TdmMain
     end
   end
   object mtStationData: TFDMemTable
+    BeforeInsert = mtStationDataBeforeInsert
+    BeforeEdit = mtStationDataBeforeEdit
+    BeforePost = mtStationDataBeforePost
+    AfterPost = mtStationDataAfterPost
     OnNewRecord = mtStationDataNewRecord
     FieldDefs = <
       item
@@ -349,6 +353,10 @@ object dmMain: TdmMain
     end
   end
   object mtStationDataClone: TFDMemTable
+    BeforeInsert = mtStationDataCloneBeforeInsert
+    BeforeEdit = mtStationDataCloneBeforeEdit
+    BeforePost = mtStationDataCloneBeforePost
+    AfterPost = mtStationDataCloneAfterPost
     FetchOptions.AssignedValues = [evMode]
     FetchOptions.Mode = fmAll
     ResourceOptions.AssignedValues = [rvSilentMode]
@@ -444,5 +452,71 @@ object dmMain: TdmMain
     ConvertPreamble = True
     Left = 362
     Top = 183
+  end
+  object mtStationDataCloneCheck: TFDMemTable
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired]
+    UpdateOptions.CheckRequired = False
+    Left = 432
+    Top = 112
+    object IntegerField2: TIntegerField
+      DefaultExpression = '0'
+      DisplayLabel = 'Станція'
+      FieldName = 'IDEnObj'
+      Required = True
+    end
+    object StringField2: TStringField
+      DisplayLabel = 'Станція'
+      DisplayWidth = 25
+      FieldKind = fkLookup
+      FieldName = 'EnObjName'
+      LookupDataSet = mtEnObjClone
+      LookupKeyFields = 'IDEnObj'
+      LookupResultField = 'Name'
+      KeyFields = 'IDEnObj'
+      Size = 100
+      Lookup = True
+    end
+    object IntegerField3: TIntegerField
+      DisplayLabel = 'Код палива'
+      FieldName = 'Code'
+      Required = True
+      DisplayFormat = '000'
+      EditFormat = '000'
+    end
+    object StringField3: TStringField
+      DisplayLabel = 'Паливо'
+      DisplayWidth = 25
+      FieldKind = fkLookup
+      FieldName = 'CodeName'
+      LookupDataSet = mtFuelRefClone
+      LookupKeyFields = 'Code'
+      LookupResultField = 'Name'
+      KeyFields = 'Code'
+      Required = True
+      Size = 1024
+      Lookup = True
+    end
+    object IntegerField4: TIntegerField
+      DefaultExpression = '0'
+      DisplayLabel = 'Прихід'
+      FieldName = 'Income'
+      Required = True
+    end
+    object IntegerField5: TIntegerField
+      DefaultExpression = '0'
+      DisplayLabel = 'Витрати'
+      FieldName = 'Costs'
+      Required = True
+    end
+    object IntegerField6: TIntegerField
+      DefaultExpression = '0'
+      DisplayLabel = 'Залишки'
+      FieldName = 'Remains'
+      Required = True
+    end
   end
 end
