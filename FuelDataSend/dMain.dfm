@@ -203,8 +203,6 @@ object dmMain: TdmMain
     FetchOptions.Mode = fmAll
     ResourceOptions.AssignedValues = [rvSilentMode]
     ResourceOptions.SilentMode = True
-    UpdateOptions.AssignedValues = [uvCheckRequired]
-    UpdateOptions.CheckRequired = False
     StoreDefs = True
     Left = 432
     Top = 8
@@ -357,16 +355,14 @@ object dmMain: TdmMain
     BeforeEdit = mtStationDataCloneBeforeEdit
     BeforePost = mtStationDataCloneBeforePost
     AfterPost = mtStationDataCloneAfterPost
+    OnNewRecord = mtStationDataCloneNewRecord
     FetchOptions.AssignedValues = [evMode]
     FetchOptions.Mode = fmAll
     ResourceOptions.AssignedValues = [rvSilentMode]
     ResourceOptions.SilentMode = True
-    UpdateOptions.AssignedValues = [uvCheckRequired]
-    UpdateOptions.CheckRequired = False
     Left = 432
     Top = 64
     object mtStationDataCloneIDEnObj: TIntegerField
-      DefaultExpression = '0'
       DisplayLabel = 'Станція'
       FieldName = 'IDEnObj'
       Required = True
@@ -384,11 +380,9 @@ object dmMain: TdmMain
       Lookup = True
     end
     object mtStationDataCloneCode: TIntegerField
-      DisplayLabel = 'Код палива'
+      DisplayLabel = 'Паливо'
       FieldName = 'Code'
       Required = True
-      DisplayFormat = '000'
-      EditFormat = '000'
     end
     object mtStationDataCloneCodeName: TStringField
       DisplayLabel = 'Паливо'

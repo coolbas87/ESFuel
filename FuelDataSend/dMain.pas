@@ -98,6 +98,7 @@ type
     procedure mtStationDataCloneAfterPost(DataSet: TDataSet);
     procedure mtStationDataCloneBeforeEdit(DataSet: TDataSet);
     procedure mtStationDataCloneBeforeInsert(DataSet: TDataSet);
+    procedure mtStationDataCloneNewRecord(DataSet: TDataSet);
   private
     FDateChanging: Boolean;
     function IsHasDoublets(ADataSet, AClone: TDataSet; const ACheckFields: String): Boolean;
@@ -155,6 +156,8 @@ begin
   mtParamsDataDate.AsDateTime := Trunc(Yesterday);
   mtParamsLayout.AsInteger := DailyLayout;
   LoadSettings;
+  mtStationData.UpdateOptions.CheckRequired := True;
+  mtStationDataClone.UpdateOptions.CheckRequired := True;
 //  mtParams.CheckBrowseMode;
 end;
 
@@ -189,20 +192,26 @@ end;
 procedure TdmMain.mtStationDataCloneBeforeEdit(DataSet: TDataSet);
 begin
   if mtStationDataClone.Active then
-    mtStationDataCloneCheck.CloneCursor(mtStationData);
+    mtStationDataCloneCheck.CloneCursor(mtStationDataClone);
 end;
 
 procedure TdmMain.mtStationDataCloneBeforeInsert(DataSet: TDataSet);
 begin
   if mtStationDataClone.Active then
-    mtStationDataCloneCheck.CloneCursor(mtStationData);
+    mtStationDataCloneCheck.CloneCursor(mtStationDataClone);
 end;
 
 procedure TdmMain.mtStationDataCloneBeforePost(DataSet: TDataSet);
 begin
   if IsHasDoublets(mtStationDataClone, mtStationDataCloneCheck, SExtViewCheckDoublets) then
-    raise Exception.CreateFmt(SFuelPresent, [mtStationDataCloneCodeName.AsString,
+    raise Exception.CreateFmt(SFuelForStationPresent, [mtStationDataCloneCodeName.AsString,
       mtStationDataCloneEnObjName.AsString]);
+end;
+
+procedure TdmMain.mtStationDataCloneNewRecord(DataSet: TDataSet);
+begin
+  mtStationDataCloneCode.AsVariant := Null;
+  mtStationDataCloneIDEnObj.AsVariant := Null;
 end;
 
 procedure TdmMain.mtStationDataNewRecord(DataSet: TDataSet);
